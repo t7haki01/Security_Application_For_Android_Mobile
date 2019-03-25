@@ -115,6 +115,8 @@ public class MainActivity extends AppCompatActivity
             WifiGetter wifi = new WifiGetter(this.context);
             TextView text = findViewById(R.id.textView);
             text.setText(wifi.getSsid());
+//            wifi.getAllAvailable();
+            wifi.wifiScan();
         }
     }
 }
