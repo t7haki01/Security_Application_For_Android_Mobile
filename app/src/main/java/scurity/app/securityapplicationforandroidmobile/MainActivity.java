@@ -17,10 +17,6 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 
-/**
-Here comes some comment from branch
-*/
-
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
         private Context context;
@@ -118,7 +114,7 @@ public class MainActivity extends AppCompatActivity
             Log.d("From main", "Wifi Btn clicked");
             WifiGetter wifi = new WifiGetter(this.context);
             TextView text = findViewById(R.id.textView);
-//            text.setText(wifi.getSsid());
+            text.setText(wifi.getSsid());
         }
     }
 }
