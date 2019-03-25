@@ -17,13 +17,17 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 
-
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener{
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+        private Context context;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        context = getApplicationContext();
+        Button wifiBtn = findViewById(R.id.wifi_btn);
+        wifiBtn.setOnClickListener(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -102,5 +106,17 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(view.getId() == R.id.wifi_btn){
+            Log.d("From main", "Wifi Btn clicked");
+            WifiGetter wifi = new WifiGetter(this.context);
+            TextView text = findViewById(R.id.textView);
+            text.setText(wifi.getSsid());
+//            wifi.getAllAvailable();
+            wifi.wifiScan();
+        }
     }
 }
