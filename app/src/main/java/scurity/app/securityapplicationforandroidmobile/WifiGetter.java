@@ -23,12 +23,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class WifiGetter {
+
+    /**
+     * Since i am thinking to put instantiation of this class to onClick for scanning wifi
+     * So with current context, constructor would be processed
+     * That is why i'm indicating with "this" keyword for current object in every methods
+     * */
     private Context context;
     private WifiManager wifiManager ;
     private WifiInfo wifiInfo ;
     private ConnectivityManager connectivityManager ;
     private int wifiState;
     private WifiConfiguration wifiConfiguration;
+    private boolean isConnected = false;
 
     static final String SECURITY_PSK = "PSK";
     static final String SECURITY_EAP = "EAP";
@@ -36,14 +43,29 @@ public class WifiGetter {
     static final String SECURITY_NONE = "NONE";
 
     /**
-     * Here comes initialization of context because current context is required for using android wifi api*/
+     * Here comes construction with context because current context is required for using android wifi api
+     * */
+
     public WifiGetter(Context context){
         this.context = context;
         this.connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        if(networkInfo.isConnected()){
+        NetworkInfo networkInfo = this.connectivityManager.getActiveNetworkInfo();
+
+        /**
+         * Let think little bit more about offline condition like when wifi is not connected
+         * */
+
+        if( networkInfo.isConnected()){
             setWifiApi();
         }
+    }
+
+    public boolean isWifiConnected(ConnectivityManager connectivityManager){
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if(networkInfo.isConnected()){
+            return true;
+        }
+        return false;
     }
 
     private void setWifiApi(){
@@ -70,12 +92,22 @@ public class WifiGetter {
         return configuration;
     }
 
-
+    public boolean isWifiEnabled(){
+        return wifiManager.isWifiEnabled();
+    }
 
     public String getSsid(){
-        Log.d("From wifiGetter", this.wifiInfo.getSSID());
         return this.wifiInfo.getSSID();
     }
+
+    public String getRssi(){
+        return ""+this.wifiInfo.getRssi();
+    }
+
+    public String getMacAddress(){
+        return this.wifiInfo.getMacAddress();
+    }
+
     public void getAllAvailable(){
         Log.d("wifi Rssi", ""+wifiInfo.getRssi());
         Log.d("wifi toString", ""+wifiInfo.toString());
@@ -95,6 +127,8 @@ public class WifiGetter {
         Log.d("wifi connet info", ""+wifiManager.getConnectionInfo());
         Log.d("wifi wifi state", ""+wifiManager.getWifiState());
         Log.d("wifi is wifi enabled", ""+wifiManager.isWifiEnabled());
+        Log.d("current config", ""+GetCurrentWifiConfiguration(wifiManager) );
+
     }
 
     public String connectedWifiSecurity(){

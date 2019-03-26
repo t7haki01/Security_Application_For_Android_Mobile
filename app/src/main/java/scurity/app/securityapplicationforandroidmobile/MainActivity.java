@@ -110,14 +110,26 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onClick(View view) {
+        WifiGetter wifi = new WifiGetter(this.context);
+        TextView text = findViewById(R.id.textView);
+        TextView text2 = findViewById(R.id.text2);
+
         if(view.getId() == R.id.wifi_btn){
+            WifiGetter wifiNew = new WifiGetter(this.context);
+
             Log.d("From main", "Wifi Btn clicked");
-            WifiGetter wifi = new WifiGetter(this.context);
-            TextView text = findViewById(R.id.textView);
+            text.setText(wifiNew.getSsid());
+            wifi.getAllAvailable();
+            wifiNew.wifiScan();
+
+           text.append(wifi.connectedWifiSecurity());
+        }
+        else if(view.getId()== R.id.btn2){
+            Log.d("From main", "Wifi Btn clicked");
             text.setText(wifi.getSsid());
 //            wifi.getAllAvailable();
             wifi.wifiScan();
-           text.append(wifi.connectedWifiSecurity());
+            text.append(wifi.connectedWifiSecurity());
         }
     }
 }
