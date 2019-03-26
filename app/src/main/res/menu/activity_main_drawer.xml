@@ -6,23 +6,23 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_wifiscanner"
-            android:icon="@drawable/ic_menu_send"
+            android:icon="@drawable/ic_menu_share"
             android:title="WiFi Scanner" />
         <item
             android:id="@+id/nav_settingschecker"
-            android:icon="@drawable/ic_menu_send"
+            android:icon="@drawable/ic_menu_share"
             android:title="Settings-Checker" />
         <item
             android:id="@+id/nav_usagetracker"
-            android:icon="@drawable/ic_menu_send"
+            android:icon="@drawable/ic_menu_share"
             android:title="App Usage Tracker" />
         <item
             android:id="@+id/nav_theftalarm"
-            android:icon="@drawable/ic_menu_send"
+            android:icon="@drawable/ic_menu_share"
             android:title="Theft Alarm" />
         <item
             android:id="@+id/nav_batterystate"
-            android:icon="@drawable/ic_menu_send"
+            android:icon="@drawable/ic_menu_share"
             android:title="Battery State" />
 
     </group>
@@ -31,7 +31,7 @@
         <menu>
             <item
                 android:id="@+id/nav_aboutapp"
-                android:icon="@drawable/ic_menu_send"
+                android:icon="@drawable/ic_menu_share"
                 android:title="About" />
         </menu>
     </item>

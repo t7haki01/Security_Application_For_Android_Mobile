@@ -1,8 +1,10 @@
 package scurity.app.securityapplicationforandroidmobile;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,14 +18,33 @@ import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener{
+
+    // Fragments
+    private FragmentManager fragmentManager;
+    private WifiScannerFragment wifiScanFrag;
+    private SettingsCheckerFragment settingCheckFrag;
+    private UsageTrackerFragment usageTrackFrag;
+    private TheftAlarmFragment theftAlarmFrag;
+    private BatteryStateFragment batteryStateFrag;
+    private AboutAppFragment aboutAppFrag;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Set wifiScanFrag as first fragment
+        fragmentManager = getSupportFragmentManager();
+        wifiScanFrag = new WifiScannerFragment();
+        fragmentManager.beginTransaction().replace(
+                R.id.main_fragment, wifiScanFrag).commit();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Button action at bottom right end of screen (mail-icon)
+        // Not needed at moment, but maybe it's useful to have it for later - [SANDRO]
+        /*
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -32,6 +53,7 @@ public class MainActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
+        */
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -81,16 +103,45 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_wifiscanner) {
-            // Handle the camera action
-        } else if (id == R.id.nav_settingschecker) {
-
-        } else if (id == R.id.nav_usagetracker) {
-
-        } else if (id == R.id.nav_theftalarm) {
-
-        } else if (id == R.id.nav_aboutapp) {
-
+        switch (id) {
+            case R.id.nav_wifiscanner:
+                setTitle("WiFi Scanner");
+                wifiScanFrag = new WifiScannerFragment();
+                fragmentManager.beginTransaction().replace(
+                        R.id.main_fragment, wifiScanFrag).commit();
+                break;
+            case R.id.nav_settingschecker:
+                setTitle("Settings Checker");
+                settingCheckFrag = new SettingsCheckerFragment();
+                fragmentManager.beginTransaction().replace(
+                        R.id.main_fragment, settingCheckFrag).commit();
+                break;
+            case R.id.nav_usagetracker:
+                setTitle("Usage Tracker");
+                usageTrackFrag = new UsageTrackerFragment();
+                fragmentManager.beginTransaction().replace(
+                        R.id.main_fragment, usageTrackFrag).commit();
+                break;
+            case R.id.nav_theftalarm:
+                setTitle("Theft Alarm");
+                theftAlarmFrag = new TheftAlarmFragment();
+                fragmentManager.beginTransaction().replace(
+                        R.id.main_fragment, theftAlarmFrag).commit();
+                break;
+            case R.id.nav_batterystate:
+                setTitle("Battery State");
+                batteryStateFrag = new BatteryStateFragment();
+                fragmentManager.beginTransaction().replace(
+                        R.id.main_fragment, batteryStateFrag).commit();
+                break;
+            case R.id.nav_aboutapp:
+                setTitle("About SysKnife");
+                aboutAppFrag = new AboutAppFragment();
+                fragmentManager.beginTransaction().replace(
+                        R.id.main_fragment, aboutAppFrag).commit();
+                break;
+            default:
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
