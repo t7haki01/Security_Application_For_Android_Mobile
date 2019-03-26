@@ -14,25 +14,26 @@ import android.net.wifi.WpsInfo;
 import android.util.Log;
 
 import java.io.InvalidClassException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class WifiGetter {
-    private boolean isConnected = false;
     private Context context;
     private WifiManager wifiManager ;
     private WifiInfo wifiInfo ;
     private ConnectivityManager connectivityManager ;
     private int wifiState;
+    private WifiConfiguration wifiConfiguration;
 
     static final String SECURITY_PSK = "PSK";
     static final String SECURITY_EAP = "EAP";
     static final String SECURITY_WEP = "WEP";
     static final String SECURITY_NONE = "NONE";
-
-
-    /*
-    * Here would comes some data files for wifi info
-    * */
 
     /**
      * Here comes initialization of context because current context is required for using android wifi api*/
@@ -50,6 +51,26 @@ public class WifiGetter {
         this.wifiInfo = this.wifiManager.getConnectionInfo();
         this.wifiState = this.wifiManager.getWifiState();
     }
+
+    public WifiConfiguration GetCurrentWifiConfiguration(WifiManager manager)
+    {
+        if (!manager.isWifiEnabled())
+            return null;
+
+        List<WifiConfiguration> configurationList = manager.getConfiguredNetworks();
+        WifiConfiguration configuration = null;
+        int cur = manager.getConnectionInfo().getNetworkId();
+        for (int i = 0; i < configurationList.size(); ++i)
+        {
+            WifiConfiguration wifiConfiguration = configurationList.get(i);
+            if (wifiConfiguration.networkId == cur)
+                configuration = wifiConfiguration;
+        }
+
+        return configuration;
+    }
+
+
 
     public String getSsid(){
         Log.d("From wifiGetter", this.wifiInfo.getSSID());
@@ -76,6 +97,16 @@ public class WifiGetter {
         Log.d("wifi is wifi enabled", ""+wifiManager.isWifiEnabled());
     }
 
+    public String connectedWifiSecurity(){
+        WifiConfiguration config  = GetCurrentWifiConfiguration(wifiManager);
+
+        String connectedWifiSecurity = getSecurity(config);
+
+        Log.d("Own wifi Security ", connectedWifiSecurity);
+
+        return connectedWifiSecurity;
+    }
+
     public void wifiScan(){
         BroadcastReceiver wifiScanReceiver = new BroadcastReceiver() {
             @Override
@@ -84,6 +115,7 @@ public class WifiGetter {
 //                        WifiManager.EXTRA_PREVIOUS_WIFI_STATE, false);
 //
                 boolean success = WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(intent.getAction());
+
                 Log.d("scan status from broad", ""+success);
                 if (success) {
                     scanSuccess();
@@ -105,17 +137,32 @@ public class WifiGetter {
         if (!success) {
             Log.d("not success", "Fired before broad");
             // scan failure handling
-//            scanFailure();
+            scanFailure();
         }
     }
 
     private void scanSuccess() {
         List<ScanResult> results = wifiManager.getScanResults();
-//  ... use new scan results ...
+        Date date = new Date();
+        Log.d("Wifi Scanned Date: ", date.toString());
+        HashMap<String, ScanResult> routerFilter = new HashMap<>();
+
         for(int i = 0; i<results.size(); i++){
-            Log.d("Wifi Scan in success ", "Tested " + i + " Wifi info "+results.get(i) + " and security check " + getSecurity(results.get(i)));
+            if(routerFilter.containsKey(results.get(i).SSID)){
+                if(routerFilter.get(results.get(i).SSID).level < results.get(i).level){
+                    routerFilter.remove(results.get(i).SSID);
+                    routerFilter.put(results.get(i).SSID, results.get(i));
+                }
+            }else{
+                routerFilter.put(results.get(i).SSID, results.get(i));
+            }
         }
 
+        Iterator hashMapIndex = routerFilter.keySet().iterator();
+        while(hashMapIndex.hasNext()){
+            String key = (String) hashMapIndex.next();
+            Log.d("Wifi Scan in success ", "Tested " + key + " Wifi info "+ routerFilter.get(key) + " and security check " + getSecurity(routerFilter.get(key)));
+        }
     }
 
     private void scanFailure() {
@@ -137,15 +184,84 @@ public class WifiGetter {
         return (config.wepKeys[0] != null) ? SECURITY_WEP : SECURITY_NONE;
     }
 
-    static String getSecurity(ScanResult result) {
-        if (result.capabilities.contains("WEP")) {
-            return SECURITY_WEP;
-        } else if (result.capabilities.contains("PSK")) {
-            return SECURITY_PSK;
-        } else if (result.capabilities.contains("EAP")) {
-            return SECURITY_EAP;
+    private static boolean isContain(String source, String subItem){
+        String pattern = "\\b"+subItem+"\\b";
+        Pattern p= Pattern.compile(pattern);
+        Matcher m=p.matcher(source);
+        return m.find();
+    }
+
+    static /*String*/int getSecurity(ScanResult result) {
+//        if (result.capabilities.contains("WEP")) {
+//            return SECURITY_WEP;
+//        } else if (result.capabilities.contains("PSK")) {
+//            return SECURITY_PSK;
+//        } else if (result.capabilities.contains("EAP")) {
+//            return SECURITY_EAP;
+//        }
+//        return SECURITY_NONE;
+        String securityInfo = result.capabilities;
+        int securityScore = 0;
+        while(true){
+            if(isContain(securityInfo, "WEP")){
+                securityScore = securityScore + 1 ;
+                int keyIndex = securityInfo.indexOf("WEP");
+                String tempText = securityInfo.substring(0, keyIndex);
+                int lengthOfString = securityInfo.length();
+                tempText += securityInfo.substring(keyIndex+3, lengthOfString);
+                securityInfo = tempText;
+            }
+            else if(isContain(securityInfo, "WPA")){
+                securityScore += 2;
+                int keyIndex = securityInfo.indexOf("WPA");
+                String tempText = securityInfo.substring(0, keyIndex);
+                int lengthOfString = securityInfo.length();
+                tempText += securityInfo.substring(keyIndex+3, lengthOfString);
+                securityInfo = tempText;
+                continue;
+            }
+            else if(isContain(securityInfo, "WPA2")){
+                securityScore =+ 3 ;
+                int keyIndex = securityInfo.indexOf("WPA2");
+                String tempText = securityInfo.substring(0, keyIndex);
+                int lengthOfString = securityInfo.length();
+                tempText += securityInfo.substring(keyIndex+4, lengthOfString);
+                securityInfo = tempText;
+                continue;
+            }
+            else if(isContain(securityInfo, "WPA3")){
+                securityScore += 4 ;
+                int keyIndex = securityInfo.indexOf("WPA3");
+                String tempText = securityInfo.substring(0, keyIndex);
+                int lengthOfString = securityInfo.length();
+                tempText += securityInfo.substring(keyIndex+4, lengthOfString);
+                securityInfo = tempText;
+                continue;
+            }
+            else if(isContain(securityInfo, "PSK")){
+                ++securityScore;
+                int keyIndex = securityInfo.indexOf("PSK");
+                String tempText = securityInfo.substring(0, keyIndex);
+                int lengthOfString = securityInfo.length();
+                tempText += securityInfo.substring(keyIndex+3, lengthOfString);
+                securityInfo = tempText;
+                continue;
+            }
+            else if(isContain(securityInfo, "EAP")){
+                ++securityScore;
+                int keyIndex = securityInfo.indexOf("EAP");
+                String tempText = securityInfo.substring(0, keyIndex);
+                int lengthOfString = securityInfo.length();
+                tempText += securityInfo.substring(keyIndex+3, lengthOfString);
+                securityInfo = tempText;
+                continue;
+            }
+            else{
+                break;
+            }
         }
-        return SECURITY_NONE;
+
+        return securityScore;
     }
 
 }

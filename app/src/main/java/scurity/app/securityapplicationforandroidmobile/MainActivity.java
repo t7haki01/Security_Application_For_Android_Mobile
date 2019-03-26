@@ -117,6 +117,7 @@ public class MainActivity extends AppCompatActivity
             text.setText(wifi.getSsid());
 //            wifi.getAllAvailable();
             wifi.wifiScan();
+           text.append(wifi.connectedWifiSecurity());
         }
     }
 }
