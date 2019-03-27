@@ -3,14 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/frame_wifiScanner"
     tools:context=".WifiScannerFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Implement WiFi Scanner here"
-        android:textSize="24sp" />
+    <!--<TextView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:text="Implement WiFi Scanner here"-->
+        <!--android:textSize="24sp" />-->
 
     <!-- TODO: Delete this Button, if not needed [cheers, Sandro]-->
     <Button
@@ -18,6 +19,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="64dp"
-        android:text="Scan Connected Wifi" />
+        android:text="SCAN"
+        android:textSize="46dp"
+        android:background="@drawable/rounded_button"
+    />
 
 </FrameLayout>
