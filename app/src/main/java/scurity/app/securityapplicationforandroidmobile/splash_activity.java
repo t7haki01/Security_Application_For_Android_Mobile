@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.view.WindowManager;
 
 public class splash_activity extends AppCompatActivity {
-    private final int DURATION_SPLASH = 3000; //How long stays on the splash screen. Time in ms
+    private final int DURATION_SPLASH = 2500; //How long stays on the splash screen. Time in ms
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
