@@ -25,5 +25,6 @@ public class splash_activity extends AppCompatActivity {
                 finish();
             };
         }, DURATION_SPLASH);
+
     } //Then it is necesary to modify android manifest, so the splash screen is shown before the mainactivity screen
 }
