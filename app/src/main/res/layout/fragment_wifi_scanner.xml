@@ -3,21 +3,58 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/frame_wifiScanner"
     tools:context=".WifiScannerFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Implement WiFi Scanner here"
-        android:textSize="24sp" />
+    <!--<TextView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:text="Implement WiFi Scanner here"-->
+        <!--android:textSize="24sp" />-->
 
     <!-- TODO: Delete this Button, if not needed [cheers, Sandro]-->
-    <Button
-        android:id="@+id/wifi_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
-        android:text="Scan Connected Wifi" />
-
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <android.support.constraint.ConstraintLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_marginTop="30dp">
+        <ProgressBar
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:indeterminate="true"
+            android:layout_marginTop="44dp"
+            android:id="@+id/loading_bar"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/wifiTable"
+            android:visibility="gone"/>
+        <Button
+            android:id="@+id/wifi_btn"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="44dp"
+            android:text="SCAN WIFI CONNECTION"
+            android:textSize="20dp"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/rounded_button"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/wifiTable"
+            android:visibility="gone"/>
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/wifiTable"
+                    app:layout_constraintTop_toBottomOf="@+id/wifi_btn"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center_horizontal">
+                </TableLayout>
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>
 </FrameLayout>
