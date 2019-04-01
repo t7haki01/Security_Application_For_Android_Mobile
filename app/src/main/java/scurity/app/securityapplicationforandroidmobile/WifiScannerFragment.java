@@ -99,10 +99,10 @@ public class WifiScannerFragment extends Fragment {
 
         if(wifiInfo.isWifiConnected()){
 
-//            wifiBtn.setVisibility(View.GONE);
-//            loadingBar.setVisibility(View.VISIBLE);
+            wifiBtn.setVisibility(View.GONE);
+            loadingBar.setVisibility(View.VISIBLE);
 
-            setProgressDialogState(true);
+//            setProgressDialogState(true);
 
             TableRow firstRow = new TableRow(context);
             firstRow.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -253,9 +253,9 @@ public class WifiScannerFragment extends Fragment {
             tableRow.addView(textView5);
             wifiTable.addView(tableRow);
         }
-        setProgressDialogState(false);
-//        loadingBar.setVisibility(View.GONE);
-//        wifiBtn.setVisibility(View.VISIBLE);
+//        setProgressDialogState(false);
+        loadingBar.setVisibility(View.GONE);
+        wifiBtn.setVisibility(View.VISIBLE);
     }
 
     private void setProgressDialogState(boolean isDone){
