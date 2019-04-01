@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
+import android.net.DhcpInfo;
 import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
@@ -12,6 +13,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WpsInfo;
 import android.util.Log;
+import android.widget.TableLayout;
 
 import java.io.InvalidClassException;
 import java.util.ArrayList;
@@ -29,6 +31,7 @@ public class WifiGetter {
      * So with current context, constructor would be processed
      * That is why i'm indicating with "this" keyword for current object in every methods
      * */
+
     private Context context;
     private WifiManager wifiManager ;
     private WifiInfo wifiInfo ;
@@ -36,7 +39,22 @@ public class WifiGetter {
     private int wifiState;
     private WifiConfiguration wifiConfiguration;
     private boolean isConnected = false;
+    private NetworkInfo networkInfo;
+    private HashMap<String, ScanResult> scanResultHashMap;
+    private boolean isScanDone = false;
 
+    public HashMap<String, ScanResult> getScanResultHashMap() {
+        return scanResultHashMap;
+    }
+
+    public boolean isScanDone() {
+        return isScanDone;
+    }
+
+    /**
+ * Another way of filtering security capabilities with returning String values below but currently using other method
+ * 28.3.2019, kihun
+ * */
     static final String SECURITY_PSK = "PSK";
     static final String SECURITY_EAP = "EAP";
     static final String SECURITY_WEP = "WEP";
@@ -48,24 +66,23 @@ public class WifiGetter {
 
     public WifiGetter(Context context){
         this.context = context;
-        this.connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = this.connectivityManager.getActiveNetworkInfo();
-
-        /**
-         * Let think little bit more about offline condition like when wifi is not connected
-         * */
-
-        if( networkInfo.isConnected()){
-            setWifiApi();
-        }
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        this.connectivityManager = connectivityManager;
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        this.networkInfo = networkInfo;
     }
 
-    public boolean isWifiConnected(ConnectivityManager connectivityManager){
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        if(networkInfo.isConnected()){
-            return true;
+    public boolean isWifiConnected(){
+        if(this.networkInfo != null){
+            if(this.networkInfo.isConnected()){
+                setWifiApi();
+                return true;
+            }
+            return false;
         }
-        return false;
+        else{
+            return false;
+        }
     }
 
     private void setWifiApi(){
@@ -74,14 +91,14 @@ public class WifiGetter {
         this.wifiState = this.wifiManager.getWifiState();
     }
 
-    public WifiConfiguration GetCurrentWifiConfiguration(WifiManager manager)
+    public WifiConfiguration GetCurrentWifiConfiguration()
     {
-        if (!manager.isWifiEnabled())
+        if (!this.wifiManager.isWifiEnabled())
             return null;
 
-        List<WifiConfiguration> configurationList = manager.getConfiguredNetworks();
+        List<WifiConfiguration> configurationList = this.wifiManager.getConfiguredNetworks();
         WifiConfiguration configuration = null;
-        int cur = manager.getConnectionInfo().getNetworkId();
+        int cur = this.wifiManager.getConnectionInfo().getNetworkId();
         for (int i = 0; i < configurationList.size(); ++i)
         {
             WifiConfiguration wifiConfiguration = configurationList.get(i);
@@ -89,6 +106,7 @@ public class WifiGetter {
                 configuration = wifiConfiguration;
         }
 
+        Log.d("config", ""+configuration);
         return configuration;
     }
 
@@ -107,6 +125,14 @@ public class WifiGetter {
     public String getMacAddress(){
         return this.wifiInfo.getMacAddress();
     }
+
+    public String getLinkSpeed() {return ""+this.wifiInfo.getLinkSpeed(); }
+
+    public DhcpInfo getDhcpInfo(){return wifiManager.getDhcpInfo();}
+
+    public WifiInfo getConnectionInfo(){return wifiManager.getConnectionInfo();}
+
+    public WifiManager getWifiManager(){return wifiManager;}
 
     public void getAllAvailable(){
         Log.d("wifi Rssi", ""+wifiInfo.getRssi());
@@ -127,12 +153,12 @@ public class WifiGetter {
         Log.d("wifi connet info", ""+wifiManager.getConnectionInfo());
         Log.d("wifi wifi state", ""+wifiManager.getWifiState());
         Log.d("wifi is wifi enabled", ""+wifiManager.isWifiEnabled());
-        Log.d("current config", ""+GetCurrentWifiConfiguration(wifiManager) );
+        Log.d("current config", ""+GetCurrentWifiConfiguration() );
 
     }
 
     public String connectedWifiSecurity(){
-        WifiConfiguration config  = GetCurrentWifiConfiguration(wifiManager);
+        WifiConfiguration config  = GetCurrentWifiConfiguration();
 
         String connectedWifiSecurity = getSecurity(config);
 
@@ -141,7 +167,15 @@ public class WifiGetter {
         return connectedWifiSecurity;
     }
 
+    public String getCurrentWifiSecurity(){
+        WifiConfiguration config = GetCurrentWifiConfiguration();
+        String secInfo = config.allowedAuthAlgorithms.toString() + " " + config.allowedGroupCiphers + " " + config.allowedPairwiseCiphers
+                + " " + config.allowedKeyManagement;
+        return secInfo;
+    }
+
     public void wifiScan(){
+        isScanDone = false;
         BroadcastReceiver wifiScanReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context c, Intent intent) {
@@ -175,7 +209,7 @@ public class WifiGetter {
         }
     }
 
-    private void scanSuccess() {
+    public void scanSuccess() {
         List<ScanResult> results = wifiManager.getScanResults();
         Date date = new Date();
         Log.d("Wifi Scanned Date: ", date.toString());
@@ -192,11 +226,24 @@ public class WifiGetter {
             }
         }
 
+        HashMap<String, ScanResult> filteredScanResult = new HashMap<>();
+
         Iterator hashMapIndex = routerFilter.keySet().iterator();
+
         while(hashMapIndex.hasNext()){
             String key = (String) hashMapIndex.next();
-            Log.d("Wifi Scan in success ", "Tested " + key + " Wifi info "+ routerFilter.get(key) + " and security check " + getSecurity(routerFilter.get(key)));
+
+            if(wifiInfo.getSSID().substring(1,wifiInfo.getSSID().length()-1) != key){
+                filteredScanResult.put(key, routerFilter.get(key));
+                Log.d("Wifi Scan in success ", "Tested " + key + " Wifi info "+ routerFilter.get(key) + " and security check " + getSecurity(routerFilter.get(key)));
+                Log.d("substracted ", wifiInfo.getSSID().substring(1,wifiInfo.getSSID().length()-1) + " and " + wifiInfo.getSSID().substring(1,wifiInfo.getSSID().length()-1).length());
+                Log.d("and key", key + " and " + key.length());
+            }
+//            Log.d("wifiScan", ""+routerFilter.get(key));
         }
+
+        scanResultHashMap = filteredScanResult;
+        isScanDone = true;
     }
 
     private void scanFailure() {
@@ -218,22 +265,20 @@ public class WifiGetter {
         return (config.wepKeys[0] != null) ? SECURITY_WEP : SECURITY_NONE;
     }
 
-    private static boolean isContain(String source, String subItem){
-        String pattern = "\\b"+subItem+"\\b";
+    private static boolean isContain(String searchFrom, String searchableWord){
+        String pattern = "\\b"+searchableWord+"\\b";
         Pattern p= Pattern.compile(pattern);
-        Matcher m=p.matcher(source);
+        Matcher m=p.matcher(searchFrom);
         return m.find();
     }
 
-    static /*String*/int getSecurity(ScanResult result) {
-//        if (result.capabilities.contains("WEP")) {
-//            return SECURITY_WEP;
-//        } else if (result.capabilities.contains("PSK")) {
-//            return SECURITY_PSK;
-//        } else if (result.capabilities.contains("EAP")) {
-//            return SECURITY_EAP;
-//        }
-//        return SECURITY_NONE;
+    public int getSecurityPoint(ScanResult scanResult){
+        int securityPoint = getSecurity(scanResult);
+
+        return securityPoint;
+    }
+
+    static int getSecurity(ScanResult result) {
         String securityInfo = result.capabilities;
         int securityScore = 0;
         while(true){
@@ -252,7 +297,6 @@ public class WifiGetter {
                 int lengthOfString = securityInfo.length();
                 tempText += securityInfo.substring(keyIndex+3, lengthOfString);
                 securityInfo = tempText;
-                continue;
             }
             else if(isContain(securityInfo, "WPA2")){
                 securityScore =+ 3 ;
@@ -261,7 +305,6 @@ public class WifiGetter {
                 int lengthOfString = securityInfo.length();
                 tempText += securityInfo.substring(keyIndex+4, lengthOfString);
                 securityInfo = tempText;
-                continue;
             }
             else if(isContain(securityInfo, "WPA3")){
                 securityScore += 4 ;
@@ -270,7 +313,6 @@ public class WifiGetter {
                 int lengthOfString = securityInfo.length();
                 tempText += securityInfo.substring(keyIndex+4, lengthOfString);
                 securityInfo = tempText;
-                continue;
             }
             else if(isContain(securityInfo, "PSK")){
                 ++securityScore;
@@ -279,7 +321,6 @@ public class WifiGetter {
                 int lengthOfString = securityInfo.length();
                 tempText += securityInfo.substring(keyIndex+3, lengthOfString);
                 securityInfo = tempText;
-                continue;
             }
             else if(isContain(securityInfo, "EAP")){
                 ++securityScore;
@@ -288,7 +329,6 @@ public class WifiGetter {
                 int lengthOfString = securityInfo.length();
                 tempText += securityInfo.substring(keyIndex+3, lengthOfString);
                 securityInfo = tempText;
-                continue;
             }
             else{
                 break;
