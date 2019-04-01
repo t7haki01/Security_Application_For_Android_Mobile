@@ -1,10 +1,12 @@
 package scurity.app.securityapplicationforandroidmobile;
 
 import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcManager;
@@ -15,9 +17,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
-
-import java.lang.reflect.Method;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,6 +27,7 @@ import java.lang.reflect.Method;
 public class SettingsCheckerFragment extends Fragment
     implements View.OnClickListener {
 
+    // Button
     private Button btnCheck;
     // private HashMap settingsMap = new HashMap();
 
@@ -32,16 +35,25 @@ public class SettingsCheckerFragment extends Fragment
     //final int PERMISSION_READ_STATE = 0;
 
     private Context context;
+
+    // TextViews
     private TextView txtPincode;
     private TextView txtWiFi;
     private TextView txtMobileData;
     private TextView txtBluetooth;
     private TextView txtLocation;
     private TextView txtNFC;
-
     //TEST
     private TextView txtTestings;
 
+    // Toggle Switches
+    private Switch switchWiFi;
+    private Switch switchMobileData;
+    private Switch switchBluetooth;
+    private Switch switchNFC;
+    private Switch switchLocation;
+
+    // Manager for Connections
     private WifiManager wifiManager;
     private ConnectivityManager connectivityManager;
     private LocationManager locationManager;
@@ -63,18 +75,89 @@ public class SettingsCheckerFragment extends Fragment
         btnCheck = (Button) view.findViewById(R.id.btn_check_settings);
         btnCheck.setOnClickListener(this);
 
-        // TextFields assigned to the View
+        // TextFields assigned to View
         txtWiFi = view.findViewById(R.id.txt_wifi);
         txtMobileData = view.findViewById(R.id.txt_mobile_data);
         txtBluetooth = view.findViewById(R.id.txt_bluetooth);
         txtLocation = view.findViewById(R.id.txt_location);
         txtNFC = view.findViewById(R.id.txt_nfc);
 
+        // Switches assigned to View
+        switchWiFi = view.findViewById(R.id.switch_wifi);
+        switchMobileData = view.findViewById(R.id.switch_mobile_data);
+        switchBluetooth = view.findViewById(R.id.switch_bluetooth);
+        switchNFC = view.findViewById(R.id.switch_nfc);
+        switchLocation = view.findViewById(R.id.switch_location);
+
+        // Manager
+        wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        // ToDO other managers
+
+        // TODO wifi check with broadcast receiver (hopefully)
+        switchWiFi.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if(isChecked){
+                    wifiManager.setWifiEnabled(true);
+                    switchWiFi.setText("On");
+                } else{
+                    wifiManager.setWifiEnabled(false);
+                    switchWiFi.setText("Off");
+                }
+            }
+        });
+
+        if(wifiManager.isWifiEnabled()){
+            switchWiFi.setChecked(true);
+            switchWiFi.setText("On");
+        } else {
+            switchWiFi.setChecked(false);
+            switchWiFi.setText("Off");
+        }
+
         // TEST
         txtTestings = view.findViewById(R.id.txt_testings);
 
         return view;
     }
+
+    // Register Broadcast Receiver
+    @Override
+    public void onStart() {
+        super.onStart();
+        // activate broadcast receiver on start
+        IntentFilter intentFilter = new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        context.registerReceiver(wifiStateReceiver, intentFilter);
+    }
+
+    // Unregister broadcast receiver
+    @Override
+    public void onStop() {
+        super.onStop();
+        context.unregisterReceiver(wifiStateReceiver);
+    }
+
+    // Broadcast Receiver
+    private BroadcastReceiver wifiStateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // WIFI_STATE_UNKNOWN: default value, if we don't receive anything)
+            int wifiStateExtra = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,
+                    WifiManager.WIFI_STATE_UNKNOWN);
+
+            switch (wifiStateExtra){
+                case WifiManager.WIFI_STATE_ENABLED:
+                    switchWiFi.setChecked(true);
+                    switchWiFi.setText("On");
+                    break;
+                case WifiManager.WIFI_STATE_DISABLED:
+                    switchWiFi.setChecked(false);
+                    switchWiFi.setText("Off");
+                    break;
+            }
+        }
+    };
+
 
     // onClick method for the button
     @Override
@@ -105,9 +188,21 @@ public class SettingsCheckerFragment extends Fragment
 
     }
 
+    // Get WiFi status as String
+    private String GetWifiStatus(){
+        if(wifiManager.isWifiEnabled() == true){
+            switchWiFi.setChecked(true);
+            return "ON";
+        } else {
+            switchWiFi.setChecked(false);
+            return "OFF";
+        }
+    }
+
     // Get Mobile Data status as String
     private String GetMobileDataStatus(){
-       boolean mobileDataAllowed = Settings.Secure.getInt(context.getContentResolver(), "mobile_data", 1) == 1;
+       boolean mobileDataAllowed = Settings.Secure.getInt(context.getContentResolver(),
+               "mobile_data", 1) == 1;
        if(mobileDataAllowed){
            return "ON";
        } else{
@@ -122,16 +217,6 @@ public class SettingsCheckerFragment extends Fragment
         if(nfcAdapter.isEnabled() == true){
             return "ON";
         } else{
-            return "OFF";
-        }
-    }
-
-    // Get WiFi status as String
-    private String GetWifiStatus(){
-        wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        if(wifiManager.isWifiEnabled() == true){
-            return "ON";
-        } else {
             return "OFF";
         }
     }
@@ -157,7 +242,8 @@ public class SettingsCheckerFragment extends Fragment
         }
     }
 
-    // EVERYTHING DOWN HERE: IMEI
+    // EVERYTHING DOWN HERE: Just to get IMEI of the device
+    // NOT NEEDED AT THE MOMENT
     /*
     // check if user is permitted to read IMEI from device
     public void CheckPermissionForIMEI(){
