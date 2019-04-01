@@ -232,26 +232,20 @@ public class WifiGetter {
 
         while(hashMapIndex.hasNext()){
             String key = (String) hashMapIndex.next();
-
-            if(wifiInfo.getSSID().substring(1,wifiInfo.getSSID().length()-1) != key){
+            String connected = wifiInfo.getSSID().substring(1,wifiInfo.getSSID().length()-1);
+            if(!connected.equals(key)){
                 filteredScanResult.put(key, routerFilter.get(key));
-                Log.d("Wifi Scan in success ", "Tested " + key + " Wifi info "+ routerFilter.get(key) + " and security check " + getSecurity(routerFilter.get(key)));
-                Log.d("substracted ", wifiInfo.getSSID().substring(1,wifiInfo.getSSID().length()-1) + " and " + wifiInfo.getSSID().substring(1,wifiInfo.getSSID().length()-1).length());
-                Log.d("and key", key + " and " + key.length());
             }
-//            Log.d("wifiScan", ""+routerFilter.get(key));
         }
-
         scanResultHashMap = filteredScanResult;
         isScanDone = true;
     }
 
     private void scanFailure() {
-        // handle failure: new scan did NOT succeed
-        // consider using old scan results: these are the OLD results!
+/**Here is in case of failing the scan but it still get the result because possible of getting older scan result*/
         List<ScanResult> results = wifiManager.getScanResults();
         Log.d("Wifi Scan failed", "Failed but here comes possible previous" + results);
-//  ... potentially use older scan results ...
+
     }
 
     static String getSecurity(WifiConfiguration config) {
