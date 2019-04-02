@@ -105,8 +105,6 @@ public class WifiGetter {
             if (wifiConfiguration.networkId == cur)
                 configuration = wifiConfiguration;
         }
-
-        Log.d("config", ""+configuration);
         return configuration;
     }
 
@@ -235,6 +233,7 @@ public class WifiGetter {
             String connected = wifiInfo.getSSID().substring(1,wifiInfo.getSSID().length()-1);
             if(!connected.equals(key)){
                 filteredScanResult.put(key, routerFilter.get(key));
+                Log.d("Scanned wifi", ""+routerFilter.get(key));
             }
         }
         scanResultHashMap = filteredScanResult;
