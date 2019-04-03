@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
@@ -20,7 +21,15 @@
         android:theme="@style/AppTheme">
 
 
-        <activity android:name=".MainActivity" android:theme="@style/AppTheme.NoActionBar"> </activity>
+        <activity android:name=".MainActivity" android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <receiver android:name=".AdminForLock" android:permission="android.permission.BIND_DEVICE_ADMIN">
+            <meta-data android:name="android.app.device_admin"
+                android:resource="@xml/policies" />
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED"/>
+            </intent-filter>
+        </receiver>
 
 
         <activity
