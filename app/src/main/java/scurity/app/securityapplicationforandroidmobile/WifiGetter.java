@@ -41,14 +41,31 @@ public class WifiGetter {
     private boolean isConnected = false;
     private NetworkInfo networkInfo;
     private HashMap<String, ScanResult> scanResultHashMap;
+    private ScanResult connectedWifiscanResult;
     private boolean isScanDone = false;
+
+    public boolean isScanDone() {
+        return isScanDone;
+    }
+
+    public void setScanDone(boolean scanDone) {
+        isScanDone = scanDone;
+    }
 
     public HashMap<String, ScanResult> getScanResultHashMap() {
         return scanResultHashMap;
     }
 
-    public boolean isScanDone() {
-        return isScanDone;
+    public void setScanResultHashMap(HashMap<String, ScanResult> scanResultHashMap) {
+        this.scanResultHashMap = scanResultHashMap;
+    }
+
+    public ScanResult getConnectedWifiscanResult() {
+        return connectedWifiscanResult;
+    }
+
+    public void setConnectedWifiscanResult(ScanResult connectedWifiscanResult) {
+        this.connectedWifiscanResult = connectedWifiscanResult;
     }
 
     /**
@@ -133,25 +150,33 @@ public class WifiGetter {
     public WifiManager getWifiManager(){return wifiManager;}
 
     public void getAllAvailable(){
-        Log.d("wifi Rssi", ""+wifiInfo.getRssi());
-        Log.d("wifi toString", ""+wifiInfo.toString());
-        Log.d("wifi network Id", ""+wifiInfo.getNetworkId());
-        Log.d("wifi mac address", ""+wifiInfo.getMacAddress());
+//        Log.d("wifi Rssi", ""+wifiInfo.getRssi());
+//        Log.d("wifi toString", ""+wifiInfo.toString());
+//        Log.d("wifi network Id", ""+wifiInfo.getNetworkId());
+//        Log.d("wifi mac address", ""+wifiInfo.getMacAddress());
         Log.d("wifi ip address", ""+wifiInfo.getIpAddress());
-        Log.d("wifi Hidden SSID", ""+wifiInfo.getHiddenSSID());
+//        Log.d("wifi Hidden SSID", ""+wifiInfo.getHiddenSSID());
         /**frequenct for api 21*/
 //        Log.d("wifi frequency", ""+wifiInfo.getFrequency());
-        Log.d("wifi BSSID", ""+wifiInfo.getBSSID());
-        Log.d("wifi desribe contents", ""+wifiInfo.describeContents());
-        Log.d("wifi Link speed", ""+wifiInfo.getLinkSpeed());
-        Log.d("wifi supplicant state", ""+wifiInfo.getSupplicantState());
+//        Log.d("wifi BSSID", ""+wifiInfo.getBSSID());
+//        Log.d("wifi desribe contents", ""+wifiInfo.describeContents());
+//        Log.d("wifi Link speed", ""+wifiInfo.getLinkSpeed());
+//        Log.d("wifi supplicant state", ""+wifiInfo.getSupplicantState());
 
-        Log.d("State change", "**********From here used wifi manager***************");
-        Log.d("wifi dhcp info", ""+wifiManager.getDhcpInfo());
-        Log.d("wifi connet info", ""+wifiManager.getConnectionInfo());
-        Log.d("wifi wifi state", ""+wifiManager.getWifiState());
-        Log.d("wifi is wifi enabled", ""+wifiManager.isWifiEnabled());
+//        Log.d("State change", "**********From here used wifi manager***************");
+//        Log.d("wifi dhcp info", ""+wifiManager.getDhcpInfo());
+//        Log.d("wifi connet info", ""+wifiManager.getConnectionInfo());
+//        Log.d("wifi wifi state", ""+wifiManager.getWifiState());
+//        Log.d("wifi is wifi enabled", ""+wifiManager.isWifiEnabled());
         Log.d("current config", ""+GetCurrentWifiConfiguration() );
+        Log.d("current manager", ""+getWifiManager() );
+        Log.d("current info", ""+wifiInfo );
+
+//        Log.d("WPA EAP check", ""+GetCurrentWifiConfiguration().allowedKeyManagement.get(WifiConfiguration.KeyMgmt.WPA_EAP));
+//        Log.d("WPA PSK check", ""+GetCurrentWifiConfiguration().allowedKeyManagement.get(WifiConfiguration.KeyMgmt.WPA_PSK));
+//        Log.d("IEEE8021x check", ""+GetCurrentWifiConfiguration().allowedKeyManagement.get(WifiConfiguration.KeyMgmt.IEEE8021X));
+//        Log.d("wepkeys", ""+GetCurrentWifiConfiguration().wepKeys);
+//        Log.d("allowed alogirithms", ""+GetCurrentWifiConfiguration().allowedAuthAlgorithms.toString());
 
     }
 
@@ -225,6 +250,7 @@ public class WifiGetter {
         }
 
         HashMap<String, ScanResult> filteredScanResult = new HashMap<>();
+        ScanResult connectedScanResult ;
 
         Iterator hashMapIndex = routerFilter.keySet().iterator();
 
@@ -233,10 +259,15 @@ public class WifiGetter {
             String connected = wifiInfo.getSSID().substring(1,wifiInfo.getSSID().length()-1);
             if(!connected.equals(key)){
                 filteredScanResult.put(key, routerFilter.get(key));
-                Log.d("Scanned wifi", ""+routerFilter.get(key));
+//                Log.d("Scanned wifi", ""+routerFilter.get(key));
+            }
+            else if(connected.equals(key)){
+                connectedScanResult = routerFilter.get(key);
+                setConnectedWifiscanResult(connectedScanResult);
             }
         }
-        scanResultHashMap = filteredScanResult;
+        setScanResultHashMap(filteredScanResult);
+
         isScanDone = true;
     }
 
@@ -318,6 +349,14 @@ public class WifiGetter {
             else if(isContain(securityInfo, "EAP")){
                 ++securityScore;
                 int keyIndex = securityInfo.indexOf("EAP");
+                String tempText = securityInfo.substring(0, keyIndex);
+                int lengthOfString = securityInfo.length();
+                tempText += securityInfo.substring(keyIndex+3, lengthOfString);
+                securityInfo = tempText;
+            }
+            else if(isContain(securityInfo, "WPS")){
+                ++securityScore;
+                int keyIndex = securityInfo.indexOf("WPS");
                 String tempText = securityInfo.substring(0, keyIndex);
                 int lengthOfString = securityInfo.length();
                 tempText += securityInfo.substring(keyIndex+3, lengthOfString);

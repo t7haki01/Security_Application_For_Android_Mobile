@@ -25,6 +25,15 @@ public class MainActivity extends AppCompatActivity
     private TheftAlarmFragment theftAlarmFrag;
     private BatteryStateFragment batteryStateFrag;
     private AboutAppFragment aboutAppFrag;
+    private boolean isWifiScanned = false;
+
+    public boolean isWifiScanned() {
+        return isWifiScanned;
+    }
+
+    public void setWifiScanned(boolean wifiScanned) {
+        isWifiScanned = wifiScanned;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +115,9 @@ public class MainActivity extends AppCompatActivity
         switch (id) {
             case R.id.nav_wifiscanner:
                 setTitle("WiFi Scanner");
-                wifiScanFrag = new WifiScannerFragment();
+                if(!isWifiScanned){
+                    wifiScanFrag = new WifiScannerFragment();
+                }
                 fragmentManager.beginTransaction().replace(
                         R.id.main_fragment, wifiScanFrag).commit();
                 break;

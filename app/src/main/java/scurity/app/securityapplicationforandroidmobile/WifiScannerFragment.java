@@ -18,6 +18,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
 import android.text.Layout;
 import android.util.Log;
 import android.view.Gravity;
@@ -50,6 +51,8 @@ public class WifiScannerFragment extends Fragment {
     private WifiGetter wifiInfo;
     Button wifiBtn;
     ProgressBar loadingBar;
+    int securityPointId;
+    TextView wifiSecRate;
 
 
     public WifiScannerFragment() {
@@ -66,36 +69,39 @@ public class WifiScannerFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        this.context = getContext();
-        this.wifiFrame = getView().findViewById(R.id.frame_wifiScanner);
-        this.wifiTable = getView().findViewById(R.id.wifiTable);
 
-        wifiBtn = getView().findViewById(R.id.wifi_btn);
-        wifiBtn.setVisibility(View.VISIBLE);
-        loadingBar = getView().findViewById(R.id.loading_bar);
+            this.context = getContext();
+            this.wifiFrame = getView().findViewById(R.id.frame_wifiScanner);
+            this.wifiTable = getView().findViewById(R.id.wifiTable);
+            this.securityPointId = ViewCompat.generateViewId();
 
-        TableRow guideRow = new TableRow(context);
-        guideRow.setGravity(Gravity.CENTER_HORIZONTAL);
-        TableRow.LayoutParams guideParams = new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        guideRow.setLayoutParams(guideParams);
+            this.wifiBtn = getView().findViewById(R.id.wifi_btn);
+            this.wifiBtn.setVisibility(View.VISIBLE);
+            this.loadingBar = getView().findViewById(R.id.loading_bar);
 
-        TextView guideText = new TextView(context);
+            TableRow guideRow = new TableRow(context);
+            guideRow.setGravity(Gravity.CENTER_HORIZONTAL);
+            TableRow.LayoutParams guideParams = new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            guideRow.setLayoutParams(guideParams);
 
-        guideText.setText("Press Button to Scan WIFI");
+            TextView guideText = new TextView(context);
 
-        guideRow.addView(guideText);
+            guideText.setText("Press Button to Scan WIFI");
 
-        wifiTable.addView(guideRow);
+            guideRow.addView(guideText);
 
-        wifiBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                wifiBtnClicked(context);
-            }
-        });
+            wifiTable.addView(guideRow);
+
+            wifiBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    wifiBtnClicked(context);
+                }
+            });
     }
 
     public void wifiBtnClicked(Context context){
+        ((MainActivity) getActivity()).setWifiScanned(true);
         wifiTable.removeAllViews();
 
         wifiInfo = new WifiGetter(context);
@@ -148,8 +154,9 @@ public class WifiScannerFragment extends Fragment {
             TextView wifiSec = makeTableText(tableFontSzie, wifiInfo.getWifiManager().getConnectionInfo().getHiddenSSID()? "YES":"NO", false, false, columnWidth );
             wifiSec.setTextColor(connectedWifiColor);
 
-            TextView wifiSecRate = makeTableText(tableFontSzie, ""+3, false, false, columnWidth );
-            wifiSecRate.setTextColor(connectedWifiColor);
+            this.wifiSecRate = makeTableText(tableFontSzie, "Rating..", false, false, columnWidth );
+            this.wifiSecRate.setTextColor(connectedWifiColor);
+            this.wifiSecRate.setId(this.securityPointId);
 
             TextView wifiRssi = makeTableText(tableFontSzie, wifiInfo.getRssi(), false, false, columnWidth );
             wifiRssi.setTextColor(connectedWifiColor);
@@ -186,7 +193,6 @@ public class WifiScannerFragment extends Fragment {
                     boolean isScanDone = wifiInfo.isScanDone();
                     if(isScanDone){
                         getExtraWifi();
-                        wifiInfo.getAllAvailable();
                     }
                 }
             };
@@ -254,6 +260,8 @@ public class WifiScannerFragment extends Fragment {
         HashMap<String, ScanResult> scanResultHashMap = wifiInfo.getScanResultHashMap();
         Iterator hashMapIndex = scanResultHashMap.keySet().iterator();
 
+        this.wifiSecRate.setText(""+wifiInfo.getSecurityPoint(wifiInfo.getConnectedWifiscanResult()));
+
         while(hashMapIndex.hasNext()){
             String key = (String) hashMapIndex.next();
             TableRow tableRow = makeTableRow();
@@ -312,7 +320,14 @@ public class WifiScannerFragment extends Fragment {
     public void showSimpleDialog(ScanResult detailInfo) {
 
         String title = "Detail";
-        ScanResult message = detailInfo;
+        String message = "";
+
+        message += "SSID: " + detailInfo.SSID;
+        message += "\n\nBSSID: " + detailInfo.BSSID;
+        message += "\n\nFrequency: " + detailInfo.frequency;
+        message += "\n\nLevel: " + detailInfo.level;
+        message += "\n\nCapabilities: " + detailInfo.capabilities;
+        message += "\n\n\n\nExtra for checking: \n" + detailInfo;
 
         new AlertDialog.Builder(context)
                 .setTitle(title)
@@ -357,13 +372,14 @@ public class WifiScannerFragment extends Fragment {
 
     private String getAllConnectedWifiInfo(){
         String info = "";
-        info += "Mac address, " + wifiInfo.getMacAddress() ;
-        info += "RSSI, " + wifiInfo.getRssi() ;
-        info += "Connection Info, " + wifiInfo.getConnectionInfo() ;
-        info += "DHCP Info, " + wifiInfo.getDhcpInfo() ;
-        info += "Configuration Info, " + wifiInfo.GetCurrentWifiConfiguration() ;
-        info += "DhcpInfo from manager, " + wifiInfo.getWifiManager().getDhcpInfo() ;
-        info += "State from manager, " + wifiInfo.getWifiManager().getWifiState() ;
+        info += "SSID:" + wifiInfo.getSsid() ;
+        info += "\n\nMac address:" + wifiInfo.getMacAddress() ;
+        info += "\n\nRSSI: " + wifiInfo.getRssi() ;
+        info += "\n\nConnection Info: " + wifiInfo.getConnectionInfo() ;
+        info += "\n\nDHCP Info: " + wifiInfo.getDhcpInfo() ;
+        info += "\n\nConfiguration Info: " + wifiInfo.GetCurrentWifiConfiguration() ;
+        info += "\n\nDhcpInfo from manager: " + wifiInfo.getWifiManager().getDhcpInfo() ;
+        info += "\n\nState from manager: " + wifiInfo.getWifiManager().getWifiState() ;
         return info;
     }
 
