@@ -9,8 +9,8 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -19,16 +19,52 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
 
-
-        <activity android:name=".MainActivity" android:theme="@style/AppTheme.NoActionBar"></activity>
-
-        <receiver android:name=".AdminForLock" android:permission="android.permission.BIND_DEVICE_ADMIN">
-            <meta-data android:name="android.app.device_admin"
+        <receiver
+            android:name=".AdminForLock"
+            android:permission="android.permission.BIND_DEVICE_ADMIN">
+            <meta-data
+                android:name="android.app.device_admin"
                 android:resource="@xml/policies" />
+
             <intent-filter>
-                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED"/>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
             </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".TheftAlarmCheckReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.READ_PHONE_STATE">
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.PHONE_STATE" >-->
+                <!--</action>-->
+            <!--</intent-filter>-->
+            <intent-filter>
+                <action android:name="android.net.wifi.CHANGE_NETWORK_STATE_CHANGED" />
+                <action android:name="android.net.wifi.STATE_CHANGE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+            <!--<intent-filter>-->
+                <!--<action android:name="android.app.action.CHANGE_WIFI_STATE" />-->
+            <!--</intent-filter>-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.app.action.CHANGE_CHANGE_WIFI_MULTICAST_STATE" />-->
+            <!--</intent-filter>-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.app.action.REBOOT" />-->
+            <!--</intent-filter>-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.app.action.BOOT_COMLETED" />-->
+            <!--</intent-filter>-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.app.action.CONNECTIVITY_CHANGE" />-->
+            <!--</intent-filter>-->
         </receiver>
 
 

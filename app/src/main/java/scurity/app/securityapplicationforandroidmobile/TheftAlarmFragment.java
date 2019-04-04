@@ -15,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,16 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -77,7 +88,7 @@ public class TheftAlarmFragment extends Fragment {
         adminBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                makeAdminAble();
+                alarmCheck();
             }
         });
 
@@ -135,11 +146,61 @@ public class TheftAlarmFragment extends Fragment {
     }
 
     private void ringTheBell(){
-//        makeSoundMax();
+        makeSoundMax();
         makeRunEvenSleep();
         makeScreenLock();
-        this.alarm = MediaPlayer.create(this.context, R.raw.ring);
+        /**
+         * Choose among thoes three alarm or something else
+         * kihun 3.4.2019
+         * */
+        this.alarm = MediaPlayer.create(this.context, R.raw.ring3);
         alarm.setLooping(true);
         alarm.start();
+    }
+
+
+    void alarmCheck(){
+
+        String url = "http://www.students.oamk.fi/~t7haki01/sysknife/index.php/api/TheftAlarm/mobiles/id/4";
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest
+                (Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try{
+                            Log.d("Response: ", response.getJSONObject(0).getString("alert"));
+                            Log.d("Response: ", ""+response.getJSONObject(0).get("alert"));
+                        }catch(JSONException e){
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO: Handle error
+                        Log.d("Error", ""+error);
+                    }
+        });
+
+//        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+//                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+//
+//                    @Override
+//                    public void onResponse(JSONObject response) {
+//                        Log.d("Response: ", response.toString());
+//                    }
+//                }, new Response.ErrorListener() {
+//
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        // TODO: Handle error
+//                        Log.d("Error", ""+error);
+//                    }
+//                });
+
+        VolleyHttpSingletone.getInstance(this.context).addToRequestQueue(jsonArrayRequest);
+
     }
 }
