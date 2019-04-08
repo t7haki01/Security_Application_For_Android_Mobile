@@ -41,14 +41,11 @@
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.READ_PHONE_STATE">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.PHONE_STATE" >-->
-                <!--</action>-->
-            <!--</intent-filter>-->
             <intent-filter>
                 <action android:name="android.net.wifi.CHANGE_NETWORK_STATE_CHANGED" />
                 <action android:name="android.net.wifi.STATE_CHANGE" />
-                <!--<action android:name="android.intent.action.BOOT_COMPLETED" />-->
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+
                 <!--<action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>-->
             </intent-filter>
             <!--<intent-filter>-->
