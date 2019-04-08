@@ -18,25 +18,12 @@ public class VolleyHttpSingletone {
     private VolleyHttpSingletone(Context context) {
         ctx = context;
         requestQueue = getRequestQueue();
-
-        imageLoader = new ImageLoader(requestQueue,
-                new ImageLoader.ImageCache() {
-                    private final LruCache<String, Bitmap>
-                            cache = new LruCache<String, Bitmap>(20);
-
-                    @Override
-                    public Bitmap getBitmap(String url) {
-                        return cache.get(url);
-                    }
-
-                    @Override
-                    public void putBitmap(String url, Bitmap bitmap) {
-                        cache.put(url, bitmap);
-                    }
-                });
     }
 
     public static synchronized VolleyHttpSingletone getInstance(Context context) {
+        /**
+         * Used as synchronized but core conception of singleton that initiate itself if it were null
+         * */
         if (instance == null) {
             instance = new VolleyHttpSingletone(context);
         }
@@ -56,7 +43,4 @@ public class VolleyHttpSingletone {
         getRequestQueue().add(req);
     }
 
-    public ImageLoader getImageLoader() {
-        return imageLoader;
-    }
 }

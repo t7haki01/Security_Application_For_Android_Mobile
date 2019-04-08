@@ -88,7 +88,7 @@ public class TheftAlarmFragment extends Fragment {
         adminBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                alarmCheck();
+
             }
         });
 
@@ -145,7 +145,7 @@ public class TheftAlarmFragment extends Fragment {
         ((MainActivity) getActivity()).addAdminToDevice(this.componentName);
     }
 
-    private void ringTheBell(){
+    public void ringTheBell(){
         makeSoundMax();
         makeRunEvenSleep();
         makeScreenLock();
@@ -156,51 +156,5 @@ public class TheftAlarmFragment extends Fragment {
         this.alarm = MediaPlayer.create(this.context, R.raw.ring3);
         alarm.setLooping(true);
         alarm.start();
-    }
-
-
-    void alarmCheck(){
-
-        String url = "http://www.students.oamk.fi/~t7haki01/sysknife/index.php/api/TheftAlarm/mobiles/id/4";
-
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest
-                (Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
-
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        try{
-                            Log.d("Response: ", response.getJSONObject(0).getString("alert"));
-                            Log.d("Response: ", ""+response.getJSONObject(0).get("alert"));
-                        }catch(JSONException e){
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // TODO: Handle error
-                        Log.d("Error", ""+error);
-                    }
-        });
-
-//        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-//                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-//
-//                    @Override
-//                    public void onResponse(JSONObject response) {
-//                        Log.d("Response: ", response.toString());
-//                    }
-//                }, new Response.ErrorListener() {
-//
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        // TODO: Handle error
-//                        Log.d("Error", ""+error);
-//                    }
-//                });
-
-        VolleyHttpSingletone.getInstance(this.context).addToRequestQueue(jsonArrayRequest);
-
     }
 }
