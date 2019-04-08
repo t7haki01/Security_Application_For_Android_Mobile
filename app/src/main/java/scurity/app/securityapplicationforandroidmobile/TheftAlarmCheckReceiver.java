@@ -19,12 +19,14 @@ import org.json.JSONException;
 public class TheftAlarmCheckReceiver extends BroadcastReceiver {
     final static protected String THEFT_ALARM_ACTIVATE_ON = "1";
     final static protected String THEFT_ALARM_ACTIVATE_OFF = "0";
+    private Context context;
 
     @Override
     public void onReceive(Context context, Intent intent) {
 //        Toast.makeText(context,"now sysknife know that booting up device", Toast.LENGTH_SHORT).show();
 //        Log.d("Sysknife", "Detecting the bootup");
 
+        this.context = context;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo wifi = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         NetworkInfo mobile = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
@@ -34,7 +36,7 @@ public class TheftAlarmCheckReceiver extends BroadcastReceiver {
         if (isConnected) {
             Toast.makeText(context,"now sysknife got the change of wifi state, connected", Toast.LENGTH_SHORT).show();
             Log.d("Network Available ", "YES");
-//            activateTheAlarm(context);
+            activateTheAlarm(context);
         } else {
             Toast.makeText(context,"now sysknife got the change of wifi state, disconnected", Toast.LENGTH_SHORT).show();
             Log.d("Network Available ", "NO");
@@ -42,7 +44,8 @@ public class TheftAlarmCheckReceiver extends BroadcastReceiver {
     }
 
     private void activateTheAlarm(Context context){
-        String url = "http://www.students.oamk.fi/~t7haki01/sysknife/index.php/api/TheftAlarm/mobiles/id/4";
+        String url = "http://www.students.oamk.fi/~t7haki01/sysknife/index.php/api/TheftAlarm/mobiles/id/1";
+        final Context thisContext = context;
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
@@ -54,8 +57,10 @@ public class TheftAlarmCheckReceiver extends BroadcastReceiver {
                             Log.d("Response: ", ""+response.getJSONObject(0).get("alert"));
                             String alertState = response.getJSONObject(0).getString("alert");
                             if(alertState.equalsIgnoreCase(THEFT_ALARM_ACTIVATE_ON)){
-                                TheftAlarmFragment alarmFragment = new TheftAlarmFragment();
-                                alarmFragment.ringTheBell();
+//                                TheftAlarmFragment alarmFragment = new TheftAlarmFragment();
+//                                alarmFragment.ringTheBell();
+                                TheftAlarmAct theftAlarmAct = new TheftAlarmAct(thisContext);
+                                theftAlarmAct.ringTheBell();
                             }
                         }catch(JSONException e){
                             e.printStackTrace();

@@ -47,8 +47,8 @@
             <intent-filter>
                 <action android:name="android.net.wifi.CHANGE_NETWORK_STATE_CHANGED" />
                 <action android:name="android.net.wifi.STATE_CHANGE" />
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+                <!--<action android:name="android.intent.action.BOOT_COMPLETED" />-->
+                <!--<action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>-->
             </intent-filter>
             <!--<intent-filter>-->
                 <!--<action android:name="android.app.action.CHANGE_WIFI_STATE" />-->
