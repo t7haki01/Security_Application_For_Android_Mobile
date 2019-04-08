@@ -20,6 +20,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
         <receiver
             android:name=".AdminForLock"
             android:permission="android.permission.BIND_DEVICE_ADMIN">
