@@ -1,7 +1,12 @@
 package scurity.app.securityapplicationforandroidmobile;
 
+import android.app.Activity;
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -9,6 +14,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -25,6 +31,15 @@ public class MainActivity extends AppCompatActivity
     private TheftAlarmFragment theftAlarmFrag;
     private BatteryStateFragment batteryStateFrag;
     private AboutAppFragment aboutAppFrag;
+    private boolean isWifiScanned = false;
+
+    public boolean isWifiScanned() {
+        return isWifiScanned;
+    }
+
+    public void setWifiScanned(boolean wifiScanned) {
+        isWifiScanned = wifiScanned;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +121,9 @@ public class MainActivity extends AppCompatActivity
         switch (id) {
             case R.id.nav_wifiscanner:
                 setTitle("WiFi Scanner");
-                wifiScanFrag = new WifiScannerFragment();
+                if(!isWifiScanned){
+                    wifiScanFrag = new WifiScannerFragment();
+                }
                 fragmentManager.beginTransaction().replace(
                         R.id.main_fragment, wifiScanFrag).commit();
                 break;
@@ -147,5 +164,29 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void addAdminToDevice(ComponentName componentName){
+        Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
+        intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "For forcing the mobile to be locked, app requires Admin authority");
+        startActivityForResult(intent, 11);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        switch(requestCode){
+            case 11:
+                if(resultCode == Activity.RESULT_OK){
+                    Log.d("From activity", resultCode + " and "+ requestCode);
+                }
+                else{
+                    Log.d("From activity", resultCode + " and "+ requestCode);
+                }
+
+                break;
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

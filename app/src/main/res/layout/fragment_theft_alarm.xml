@@ -3,13 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".TheftAlarmFragment">
+    tools:context=".TheftAlarmFragment"
+    android:id="@+id/frame_theftAlarm"
+    android:tag="myapp:theftAlarm">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text='Implement "Theft Alarm" here'
-        android:textSize="24sp" />
 
 </FrameLayout>
