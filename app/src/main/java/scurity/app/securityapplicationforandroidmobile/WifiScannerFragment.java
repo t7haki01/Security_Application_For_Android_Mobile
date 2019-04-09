@@ -125,13 +125,13 @@ public class WifiScannerFragment extends Fragment {
             firstRow.setLayoutParams(headParams);
 
             TextView headName = makeTableText(tableFontSzie, "WIFI", true, false, columnWidth);
-            TextView headSec = makeTableText(tableFontSzie, "HIDDEN", true, false, columnWidth);
+            TextView headFrq = makeTableText(tableFontSzie, "Channel", true, false, columnWidth);
             TextView headSecPoint = makeTableText(tableFontSzie, "Rate", true, false, columnWidth);
             TextView headSignal = makeTableText(tableFontSzie, "Strength", true, false, columnWidth);
             TextView headLink = makeTableText(tableFontSzie, "Detail", true, true, columnWidth);
 
             firstRow.addView(headName);
-            firstRow.addView(headSec);
+            firstRow.addView(headFrq);
             firstRow.addView(headSecPoint);
             firstRow.addView(headSignal);
             firstRow.addView(headLink);
@@ -151,8 +151,11 @@ public class WifiScannerFragment extends Fragment {
             TextView wifiSsid = makeTableText(tableFontSzie, wifiInfo.getSsid(), false, false, columnWidth );
             wifiSsid.setTextColor(connectedWifiColor);
 
-            TextView wifiSec = makeTableText(tableFontSzie, wifiInfo.getWifiManager().getConnectionInfo().getHiddenSSID()? "YES":"NO", false, false, columnWidth );
-            wifiSec.setTextColor(connectedWifiColor);
+            TextView wifiFreq = makeTableText(tableFontSzie, wifiInfo.getWifiManager().getConnectionInfo().getHiddenSSID()? "YES":"NO"
+                    /**Uncomment this when production mode or in the environment API level higher than 21 which is able to use following api
+                     * wifiInfo.getConnectionInfo().getFrequency()**/
+                    , false, false, columnWidth );
+            wifiFreq.setTextColor(connectedWifiColor);
 
             this.wifiSecRate = makeTableText(tableFontSzie, "Rating..", false, false, columnWidth );
             this.wifiSecRate.setTextColor(connectedWifiColor);
@@ -178,7 +181,7 @@ public class WifiScannerFragment extends Fragment {
             });
 
             secondRow.addView(wifiSsid);
-            secondRow.addView(wifiSec);
+            secondRow.addView(wifiFreq);
             secondRow.addView(wifiSecRate);
             secondRow.addView(wifiRssi);
             secondRow.addView(detailBtn);

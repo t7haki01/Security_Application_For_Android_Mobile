@@ -8,23 +8,26 @@ import android.media.AudioManager;
 import android.media.Image;
 import android.media.MediaPlayer;
 import android.os.PowerManager;
+import android.util.Log;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 public class TheftAlarmAct {
-    private MediaPlayer alarm;
+
+    private MediaPlayer alarm = null;
     private ComponentName componentName;
     private DevicePolicyManager devicePolicyManager;
     private Context context;
+    private WarningAlarm warningAlarm;
 
     public TheftAlarmAct(Context context){
         this.context = context;
-        this.alarm = new MediaPlayer();
+//        this.alarm = new MediaPlayer();
         this.componentName = new ComponentName(this.context, AdminForLock.class);
         this.devicePolicyManager = (DevicePolicyManager) this.context.getSystemService(Context.DEVICE_POLICY_SERVICE);
+        warningAlarm = new WarningAlarm();
     }
-
 
     public void ringTheBell(){
         makeSoundMax();
@@ -34,16 +37,17 @@ public class TheftAlarmAct {
          * Choose among thoes three alarm or something else
          * kihun 3.4.2019
          * */
-        this.alarm = MediaPlayer.create(this.context, R.raw.ring3);
-        alarm.setLooping(true);
-//        alarm.start();
-        alarm.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                alarm.start();
-            }
-        });
+        //This is for the stoppable way of implementing
+        warningAlarm.play(context, R.raw.ring);
 
+        /**This is kinda unstoppable unless alarm state is changed and receiever check again since mediaplayer already released so can not get the stop context*/
+//        if( alarm == null){
+//            alarm = MediaPlayer.create(this.context, R.raw.ring3);
+//            if(!alarm.isPlaying()){
+//                alarm.setLooping(true);
+//                alarm.start();
+//            }
+//        }
     }
     private void makeSoundMax(){
         AudioManager audioManager = (AudioManager) this.context.getApplicationContext().getSystemService(this.context.AUDIO_SERVICE);
@@ -56,20 +60,10 @@ public class TheftAlarmAct {
 
     public void killTheBell(){
         try{
-            if(alarm.isLooping()){
-                alarm.pause();
-            }
-            alarm.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    alarm.stop();
-                }
-            });
+            warningAlarm.stop(context);
         }catch(NullPointerException e){
             e.printStackTrace();
         }
-
-
     }
 
     private void makeRunEvenSleep(){

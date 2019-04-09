@@ -33,8 +33,6 @@ public class TheftAlarmCheckReceiver extends BroadcastReceiver {
         Log.d(TAG, log);
         Toast.makeText(context, log, Toast.LENGTH_LONG).show();
 
-
-
         this.context = context;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo wifi = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);

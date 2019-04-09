@@ -79,8 +79,8 @@ public class TheftAlarmFragment extends Fragment {
         stopBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TheftAlarmAct theftAlarmAct = new TheftAlarmAct(context);
-                theftAlarmAct.killTheBell();
+                WarningAlarm warningAlarm = new WarningAlarm();
+                warningAlarm.stop(context);
             }
         });
 
