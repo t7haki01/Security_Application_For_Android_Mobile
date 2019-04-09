@@ -121,11 +121,9 @@ public class MainActivity extends AppCompatActivity
         switch (id) {
             case R.id.nav_wifiscanner:
                 setTitle("WiFi Scanner");
-                if(!isWifiScanned){
-                    wifiScanFrag = new WifiScannerFragment();
-                }
+                wifiScanFrag = new WifiScannerFragment();
                 fragmentManager.beginTransaction().replace(
-                        R.id.main_fragment, wifiScanFrag).commit();
+                R.id.main_fragment, wifiScanFrag).commit();
                 break;
             case R.id.nav_settingschecker:
                 setTitle("Settings Checker");
@@ -189,4 +187,6 @@ public class MainActivity extends AppCompatActivity
 
         super.onActivityResult(requestCode, resultCode, data);
     }
+
+
 }

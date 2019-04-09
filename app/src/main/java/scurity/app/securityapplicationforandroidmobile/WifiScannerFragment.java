@@ -45,7 +45,7 @@ import java.util.Iterator;
  * A simple {@link Fragment} subclass.
  */
 public class WifiScannerFragment extends Fragment {
-    private Context context;
+    private Context context = null;
     private FrameLayout wifiFrame;
     private TableLayout wifiTable;
     private WifiGetter wifiInfo;
@@ -69,39 +69,46 @@ public class WifiScannerFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+            context = getContext();
+            Activity activity = getActivity();
+            if(isAdded() && activity != null){
 
-            this.context = getContext();
-            this.wifiFrame = getView().findViewById(R.id.frame_wifiScanner);
-            this.wifiTable = getView().findViewById(R.id.wifiTable);
-            this.securityPointId = ViewCompat.generateViewId();
+                Log.d("From wifiFragment", ""+isAdded()+" and " + getActivity() + " and " + context);
 
-            this.wifiBtn = getView().findViewById(R.id.wifi_btn);
-            this.wifiBtn.setVisibility(View.VISIBLE);
-            this.loadingBar = getView().findViewById(R.id.loading_bar);
+                wifiFrame = getView().findViewById(R.id.frame_wifiScanner);
+                wifiTable = getView().findViewById(R.id.wifiTable);
+                securityPointId = ViewCompat.generateViewId();
 
-            TableRow guideRow = new TableRow(context);
-            guideRow.setGravity(Gravity.CENTER_HORIZONTAL);
-            TableRow.LayoutParams guideParams = new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            guideRow.setLayoutParams(guideParams);
+                wifiBtn = getView().findViewById(R.id.wifi_btn);
+                wifiBtn.setVisibility(View.VISIBLE);
+                loadingBar = getView().findViewById(R.id.loading_bar);
 
-            TextView guideText = new TextView(context);
+                TableRow guideRow = new TableRow(context);
+                guideRow.setGravity(Gravity.CENTER_HORIZONTAL);
+                TableRow.LayoutParams guideParams = new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                guideRow.setLayoutParams(guideParams);
 
-            guideText.setText("Press Button to Scan WIFI");
+                TextView guideText = new TextView(context);
 
-            guideRow.addView(guideText);
+                guideText.setText("Press Button to Scan WIFI");
 
-            wifiTable.addView(guideRow);
+                guideRow.addView(guideText);
 
-            wifiBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    wifiBtnClicked(context);
-                }
-            });
+                wifiTable.addView(guideRow);
+
+                wifiBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        wifiBtnClicked(context);
+                    }
+                });
+            }
+            else{
+                getFragmentManager().executePendingTransactions();
+            }
     }
 
     public void wifiBtnClicked(Context context){
-        ((MainActivity) getActivity()).setWifiScanned(true);
         wifiTable.removeAllViews();
 
         wifiInfo = new WifiGetter(context);
@@ -115,6 +122,7 @@ public class WifiScannerFragment extends Fragment {
             wifiBtn.setVisibility(View.GONE);
             loadingBar.setVisibility(View.VISIBLE);
 
+            ((MainActivity) getActivity()).setWifiScanned(true);
 //            setProgressDialogState(true);
 
             TableRow firstRow = new TableRow(context);

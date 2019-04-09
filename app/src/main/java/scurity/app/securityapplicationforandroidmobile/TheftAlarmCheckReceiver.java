@@ -26,6 +26,7 @@ public class TheftAlarmCheckReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+
         StringBuilder sb = new StringBuilder();
         sb.append("Action: " + intent.getAction() + "\n");
         sb.append("URI: " + intent.toUri(Intent.URI_INTENT_SCHEME).toString() + "\n");
@@ -50,7 +51,12 @@ public class TheftAlarmCheckReceiver extends BroadcastReceiver {
 
     private void activateTheAlarm(Context context){
         String url = "http://www.students.oamk.fi/~t7haki01/sysknife/index.php/api/TheftAlarm/mobiles/id/1";
-        theftAlarmAct = new TheftAlarmAct(context);
+        try{
+            theftAlarmAct = new TheftAlarmAct(context);
+        }catch(IllegalStateException e){
+            e.printStackTrace();
+        }
+
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
