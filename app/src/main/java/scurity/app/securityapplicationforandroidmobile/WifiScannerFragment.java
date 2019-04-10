@@ -35,6 +35,8 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.android.volley.VolleyError;
+
 import org.w3c.dom.Text;
 
 import java.util.HashMap;
@@ -201,9 +203,12 @@ public class WifiScannerFragment extends Fragment {
             BroadcastReceiver wifiExtra = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context c, Intent intent) {
-                    boolean isScanDone = wifiInfo.isScanDone();
-                    if(isScanDone){
-                        getExtraWifi();
+                    Activity activity = getActivity();
+                    if(activity!=null){
+                        boolean isScanDone = wifiInfo.isScanDone();
+                        if(isScanDone){
+                            getExtraWifi();
+                        }
                     }
                 }
             };

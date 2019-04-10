@@ -1,5 +1,6 @@
 package scurity.app.securityapplicationforandroidmobile;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -57,7 +58,6 @@ public class TheftAlarmCheckReceiver extends BroadcastReceiver {
             e.printStackTrace();
         }
 
-
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
 
@@ -78,7 +78,6 @@ public class TheftAlarmCheckReceiver extends BroadcastReceiver {
                         }
                     }
                 }, new Response.ErrorListener() {
-
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // TODO: Handle error
