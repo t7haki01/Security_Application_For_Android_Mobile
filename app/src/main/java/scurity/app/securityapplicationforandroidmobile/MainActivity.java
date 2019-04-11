@@ -224,17 +224,14 @@ public class MainActivity extends AppCompatActivity
                     perms.put(permissions[i], grantResults[i]);
 
                 // Check for ACCESS_FINE_LOCATION
-                if (perms.get(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-
-                ) {
+                if (perms.get(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
                     // All Permissions Granted
-
                     // Permission Denied
-                    Toast.makeText(MainActivity.this, "All Permission GRANTED !! Thank You :)", Toast.LENGTH_SHORT)
+                    Toast.makeText(MainActivity.this, "All Permission GRANTED !! Good to go!", Toast.LENGTH_SHORT)
                             .show();
                 } else {
                     // Permission Denied
-                    Toast.makeText(MainActivity.this, "One or More Permissions are DENIED Exiting App :(", Toast.LENGTH_SHORT)
+                    Toast.makeText(MainActivity.this, "One or More Permissions are DENIED, App Requires Permissions to work on it ", Toast.LENGTH_SHORT)
                             .show();
                     finish();
                 }
@@ -279,7 +276,7 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
-        Toast.makeText(MainActivity.this, "No new Permission Required- Launching App .You are Awesome!!", Toast.LENGTH_SHORT)
+        Toast.makeText(MainActivity.this, "No new Permission Required - Everything Clean!", Toast.LENGTH_SHORT)
                 .show();
     }
 
