@@ -7,12 +7,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
+
 import android.net.wifi.WifiManager;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
+import android.telephony.PhoneStateListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,13 +29,16 @@ import android.widget.TextView;
 public class SettingsCheckerFragment extends Fragment
     implements View.OnClickListener {
 
+    private int b = 0;
+
     // Button
     private Button btnCheck;
-    // private HashMap settingsMap = new HashMap();
 
+    // Member to check IMEI (not needed at the moment)
     //private TextView txtIMEI;
     //final int PERMISSION_READ_STATE = 0;
 
+    // Context
     private Context context;
 
     // TextViews
@@ -43,7 +48,7 @@ public class SettingsCheckerFragment extends Fragment
     private TextView txtBluetooth;
     private TextView txtLocation;
     private TextView txtNFC;
-    //TEST
+    //Textview for testings TODO delete when finished
     private TextView txtTestings;
 
     // Toggle Switches
@@ -60,6 +65,7 @@ public class SettingsCheckerFragment extends Fragment
     private BluetoothAdapter bluetoothAdapter;
     private NfcManager nfcManager;
 
+    // Constructor
     public SettingsCheckerFragment() {
         // Required empty public constructor
     }
@@ -67,6 +73,7 @@ public class SettingsCheckerFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_settings_checker, container, false);
         context = view.getContext();
@@ -91,29 +98,13 @@ public class SettingsCheckerFragment extends Fragment
 
         // Manager
         wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
         // ToDO other managers
 
-        // TODO wifi check with broadcast receiver (hopefully)
-        switchWiFi.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if(isChecked){
-                    wifiManager.setWifiEnabled(true);
-                    switchWiFi.setText("On");
-                } else{
-                    wifiManager.setWifiEnabled(false);
-                    switchWiFi.setText("Off");
-                }
-            }
-        });
-
-        if(wifiManager.isWifiEnabled()){
-            switchWiFi.setChecked(true);
-            switchWiFi.setText("On");
-        } else {
-            switchWiFi.setChecked(false);
-            switchWiFi.setText("Off");
-        }
+        // Handler for the switches (when you click on the toggle switches for the connections)
+        WifiSwitchHandler();
+        // TODO other switches
 
         // TEST
         txtTestings = view.findViewById(R.id.txt_testings);
@@ -126,8 +117,13 @@ public class SettingsCheckerFragment extends Fragment
     public void onStart() {
         super.onStart();
         // activate broadcast receiver on start
-        IntentFilter intentFilter = new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION);
-        context.registerReceiver(wifiStateReceiver, intentFilter);
+        IntentFilter intentFilterWifi = new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION);
+
+        //TODO funzt eigentlich, des konnst mitm WIFI zammlegen, weil de zwa schaun imma aufananedr
+        IntentFilter intentFilterMobileData = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        // TODO other filters?
+        context.registerReceiver(wifiStateReceiver, intentFilterWifi);
+        context.registerReceiver(mobileDataStateReceiver, intentFilterMobileData);
     }
 
     // Unregister broadcast receiver
@@ -135,9 +131,10 @@ public class SettingsCheckerFragment extends Fragment
     public void onStop() {
         super.onStop();
         context.unregisterReceiver(wifiStateReceiver);
+        context.unregisterReceiver(mobileDataStateReceiver);
     }
 
-    // Broadcast Receiver
+    // Broadcast Receiver for WiFi state
     private BroadcastReceiver wifiStateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -158,56 +155,70 @@ public class SettingsCheckerFragment extends Fragment
         }
     };
 
+    // Broadcast Receiver for mobile data state
+    private BroadcastReceiver mobileDataStateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            boolean mobileDataAllowed = Settings.Secure.getInt(context.getContentResolver(),
+                    "mobile_data", 1) == 1;
 
-    // onClick method for the button
-    @Override
-    public void onClick(View view) {
-        CheckCurrentSettings();
-    }
+            if(mobileDataAllowed){
+                switchMobileData.setChecked(true);
+                switchMobileData.setText("On");
+            } else{
+                switchMobileData.setChecked(false);
+                switchMobileData.setText("Off");
+            }
+        }
+    };
 
-    private void CheckCurrentSettings(){
-        // TODO pincode
-        // TODO lockscreen
-        // TODO fingerprint
-        // TODO developer mode
-
-        // WiFi
-        txtWiFi.setText(GetWifiStatus());
-
-        // Mobile Data
-        txtMobileData.setText(GetMobileDataStatus());      ;
-
-        // Bluetooth
-        txtBluetooth.setText(GetBluetoothStatus());
-
-        // NFC
-        txtNFC.setText(GetNFCStatus());
-
-        // GPS (Location)
-        txtLocation.setText(GetGpsStatus());
-
-    }
-
-    // Get WiFi status as String
-    private String GetWifiStatus(){
-        if(wifiManager.isWifiEnabled() == true){
+    // handling toggle Switch for MOBILE DATA
+    private void MobileDataSwitchHandler() {
+        switchMobileData.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked) {
+                    // TODO switch mobile data on
+                    switchMobileData.setText("On");
+                } else {
+                    // TODO switch mobile data off
+                    switchMobileData.setText("Off");
+                }
+            }
+        });
+        /*
+        if (wifiManager.isWifiEnabled()) {
             switchWiFi.setChecked(true);
-            return "ON";
+            switchWiFi.setText("On");
         } else {
             switchWiFi.setChecked(false);
-            return "OFF";
+            switchWiFi.setText("Off");
         }
+        */
     }
 
-    // Get Mobile Data status as String
-    private String GetMobileDataStatus(){
-       boolean mobileDataAllowed = Settings.Secure.getInt(context.getContentResolver(),
-               "mobile_data", 1) == 1;
-       if(mobileDataAllowed){
-           return "ON";
-       } else{
-           return "OFF";
-       }
+    // handling toggle Switch for WIFI
+    private void WifiSwitchHandler() {
+        switchWiFi.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked) {
+                    wifiManager.setWifiEnabled(true);
+                    switchWiFi.setText("On");
+                } else {
+                    wifiManager.setWifiEnabled(false);
+                    switchWiFi.setText("Off");
+                }
+            }
+        });
+
+        if (wifiManager.isWifiEnabled()) {
+            switchWiFi.setChecked(true);
+            switchWiFi.setText("On");
+        } else {
+            switchWiFi.setChecked(false);
+            switchWiFi.setText("Off");
+        }
     }
 
     // Get NFC status as String
@@ -240,6 +251,29 @@ public class SettingsCheckerFragment extends Fragment
         } else{
             return "OFF";
         }
+    }
+
+    // TODO onClick+Button and CheckAllSettings can be deleted after setting up BroadcastReceivers
+    // onClick method for the button
+    @Override
+    public void onClick(View view) {
+        CheckAllSettings();
+    }
+
+    private void CheckAllSettings(){
+        // TODO pincode
+        // TODO lockscreen
+        // TODO fingerprint
+        // TODO developer mode
+
+        // Bluetooth
+        txtBluetooth.setText(GetBluetoothStatus());
+
+        // NFC
+        txtNFC.setText(GetNFCStatus());
+
+        // GPS (Location)
+        txtLocation.setText(GetGpsStatus());
     }
 
     // EVERYTHING DOWN HERE: Just to get IMEI of the device

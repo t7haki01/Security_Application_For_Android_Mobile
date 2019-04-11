@@ -65,7 +65,6 @@
             <!--</intent-filter>-->
         </receiver>
 
-
         <activity
             android:name=".splash_activity"
             android:label="@string/app_name"
@@ -77,7 +76,7 @@
             </intent-filter>
         </activity>
 
-       
+
     </application>
 
 </manifest>
