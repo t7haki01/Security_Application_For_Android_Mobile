@@ -1,5 +1,6 @@
 package scurity.app.securityapplicationforandroidmobile;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,15 +17,23 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import static com.android.volley.VolleyLog.TAG;
+
 public class TheftAlarmCheckReceiver extends BroadcastReceiver {
     final static protected String THEFT_ALARM_ACTIVATE_ON = "1";
     final static protected String THEFT_ALARM_ACTIVATE_OFF = "0";
     private Context context;
+    private TheftAlarmAct theftAlarmAct = null;
 
     @Override
     public void onReceive(Context context, Intent intent) {
-//        Toast.makeText(context,"now sysknife know that booting up device", Toast.LENGTH_SHORT).show();
-//        Log.d("Sysknife", "Detecting the bootup");
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Action: " + intent.getAction() + "\n");
+        sb.append("URI: " + intent.toUri(Intent.URI_INTENT_SCHEME).toString() + "\n");
+        String log = sb.toString();
+        Log.d(TAG, log);
+        Toast.makeText(context, log, Toast.LENGTH_LONG).show();
 
         this.context = context;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -34,18 +43,20 @@ public class TheftAlarmCheckReceiver extends BroadcastReceiver {
         boolean isConnected = wifi != null && wifi.isConnectedOrConnecting() ||
                 mobile != null && mobile.isConnectedOrConnecting();
         if (isConnected) {
-            Toast.makeText(context,"now sysknife got the change of wifi state, connected", Toast.LENGTH_SHORT).show();
-            Log.d("Network Available ", "YES");
+            Toast.makeText(context,"Now Sysknife got the change of wifi state, connected, Check Wi-Fi Security and informations from Sysknife app", Toast.LENGTH_LONG).show();
             activateTheAlarm(context);
         } else {
-            Toast.makeText(context,"now sysknife got the change of wifi state, disconnected", Toast.LENGTH_SHORT).show();
-            Log.d("Network Available ", "NO");
+            Toast.makeText(context,"Now Sysknife got the change of wifi state, disconnected", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void activateTheAlarm(Context context){
         String url = "http://www.students.oamk.fi/~t7haki01/sysknife/index.php/api/TheftAlarm/mobiles/id/1";
-        final Context thisContext = context;
+        try{
+            theftAlarmAct = new TheftAlarmAct(context);
+        }catch(IllegalStateException e){
+            e.printStackTrace();
+        }
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
@@ -57,17 +68,16 @@ public class TheftAlarmCheckReceiver extends BroadcastReceiver {
                             Log.d("Response: ", ""+response.getJSONObject(0).get("alert"));
                             String alertState = response.getJSONObject(0).getString("alert");
                             if(alertState.equalsIgnoreCase(THEFT_ALARM_ACTIVATE_ON)){
-//                                TheftAlarmFragment alarmFragment = new TheftAlarmFragment();
-//                                alarmFragment.ringTheBell();
-                                TheftAlarmAct theftAlarmAct = new TheftAlarmAct(thisContext);
                                 theftAlarmAct.ringTheBell();
+                            }
+                            else if(alertState.equalsIgnoreCase(THEFT_ALARM_ACTIVATE_OFF)){
+                                theftAlarmAct.killTheBell();
                             }
                         }catch(JSONException e){
                             e.printStackTrace();
                         }
                     }
                 }, new Response.ErrorListener() {
-
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // TODO: Handle error

@@ -3,10 +3,37 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".TheftAlarmFragment"
     android:id="@+id/frame_theftAlarm"
     android:tag="myapp:theftAlarm">
 
     <!-- TODO: Update blank fragment layout -->
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="100dp"
+            android:text="
+            When Your mobile is missing or stolen,
+            activate the our theft alarm so it will ring the bell
+            even if it is silent/mute mode or lower volume and
+            it will automatically lock the phone so if it were locekd
+            with pin or pattern then it would prevent other people
+            from accessing your mobile.
+            "/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginBottom="100dp"
+            android:text="Go to set your mobile theft Alarm"/>
+    </android.support.constraint.ConstraintLayout>
 
 </FrameLayout>

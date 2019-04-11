@@ -35,8 +35,10 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+
 import org.w3c.dom.Text;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -45,7 +47,7 @@ import java.util.Iterator;
  * A simple {@link Fragment} subclass.
  */
 public class WifiScannerFragment extends Fragment {
-    private Context context;
+    private Context context = null;
     private FrameLayout wifiFrame;
     private TableLayout wifiTable;
     private WifiGetter wifiInfo;
@@ -54,12 +56,9 @@ public class WifiScannerFragment extends Fragment {
     int securityPointId;
     TextView wifiSecRate;
 
-
     public WifiScannerFragment() {
         // Required empty public constructor
     }
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -69,39 +68,46 @@ public class WifiScannerFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+            context = getContext();
+            Activity activity = getActivity();
+            if(isAdded() && activity != null){
 
-            this.context = getContext();
-            this.wifiFrame = getView().findViewById(R.id.frame_wifiScanner);
-            this.wifiTable = getView().findViewById(R.id.wifiTable);
-            this.securityPointId = ViewCompat.generateViewId();
+                Log.d("From wifiFragment", ""+isAdded()+" and " + getActivity() + " and " + context);
 
-            this.wifiBtn = getView().findViewById(R.id.wifi_btn);
-            this.wifiBtn.setVisibility(View.VISIBLE);
-            this.loadingBar = getView().findViewById(R.id.loading_bar);
+                wifiFrame = getView().findViewById(R.id.frame_wifiScanner);
+                wifiTable = getView().findViewById(R.id.wifiTable);
+                securityPointId = ViewCompat.generateViewId();
 
-            TableRow guideRow = new TableRow(context);
-            guideRow.setGravity(Gravity.CENTER_HORIZONTAL);
-            TableRow.LayoutParams guideParams = new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            guideRow.setLayoutParams(guideParams);
+                wifiBtn = getView().findViewById(R.id.wifi_btn);
+                wifiBtn.setVisibility(View.VISIBLE);
+                loadingBar = getView().findViewById(R.id.loading_bar);
 
-            TextView guideText = new TextView(context);
+                TableRow guideRow = new TableRow(context);
+                guideRow.setGravity(Gravity.CENTER_HORIZONTAL);
+                TableRow.LayoutParams guideParams = new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                guideRow.setLayoutParams(guideParams);
 
-            guideText.setText("Press Button to Scan WIFI");
+                TextView guideText = new TextView(context);
 
-            guideRow.addView(guideText);
+                guideText.setText("Press Button to Scan WIFI");
 
-            wifiTable.addView(guideRow);
+                guideRow.addView(guideText);
 
-            wifiBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    wifiBtnClicked(context);
-                }
-            });
+                wifiTable.addView(guideRow);
+
+                wifiBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        wifiBtnClicked(context);
+                    }
+                });
+            }
+            else{
+                getFragmentManager().executePendingTransactions();
+            }
     }
 
     public void wifiBtnClicked(Context context){
-        ((MainActivity) getActivity()).setWifiScanned(true);
         wifiTable.removeAllViews();
 
         wifiInfo = new WifiGetter(context);
@@ -115,6 +121,7 @@ public class WifiScannerFragment extends Fragment {
             wifiBtn.setVisibility(View.GONE);
             loadingBar.setVisibility(View.VISIBLE);
 
+            ((MainActivity) getActivity()).setWifiScanned(true);
 //            setProgressDialogState(true);
 
             TableRow firstRow = new TableRow(context);
@@ -125,13 +132,13 @@ public class WifiScannerFragment extends Fragment {
             firstRow.setLayoutParams(headParams);
 
             TextView headName = makeTableText(tableFontSzie, "WIFI", true, false, columnWidth);
-            TextView headSec = makeTableText(tableFontSzie, "HIDDEN", true, false, columnWidth);
+            TextView headFrq = makeTableText(tableFontSzie, "Channel", true, false, columnWidth);
             TextView headSecPoint = makeTableText(tableFontSzie, "Rate", true, false, columnWidth);
             TextView headSignal = makeTableText(tableFontSzie, "Strength", true, false, columnWidth);
             TextView headLink = makeTableText(tableFontSzie, "Detail", true, true, columnWidth);
 
             firstRow.addView(headName);
-            firstRow.addView(headSec);
+            firstRow.addView(headFrq);
             firstRow.addView(headSecPoint);
             firstRow.addView(headSignal);
             firstRow.addView(headLink);
@@ -151,8 +158,11 @@ public class WifiScannerFragment extends Fragment {
             TextView wifiSsid = makeTableText(tableFontSzie, wifiInfo.getSsid(), false, false, columnWidth );
             wifiSsid.setTextColor(connectedWifiColor);
 
-            TextView wifiSec = makeTableText(tableFontSzie, wifiInfo.getWifiManager().getConnectionInfo().getHiddenSSID()? "YES":"NO", false, false, columnWidth );
-            wifiSec.setTextColor(connectedWifiColor);
+            TextView wifiFreq = makeTableText(tableFontSzie, wifiInfo.getWifiManager().getConnectionInfo().getHiddenSSID()? "YES":"NO"
+                    /**Uncomment this when production mode or in the environment API level higher than 21 which is able to use following api
+                     * wifiInfo.getConnectionInfo().getFrequency()**/
+                    , false, false, columnWidth );
+            wifiFreq.setTextColor(connectedWifiColor);
 
             this.wifiSecRate = makeTableText(tableFontSzie, "Rating..", false, false, columnWidth );
             this.wifiSecRate.setTextColor(connectedWifiColor);
@@ -178,7 +188,7 @@ public class WifiScannerFragment extends Fragment {
             });
 
             secondRow.addView(wifiSsid);
-            secondRow.addView(wifiSec);
+            secondRow.addView(wifiFreq);
             secondRow.addView(wifiSecRate);
             secondRow.addView(wifiRssi);
             secondRow.addView(detailBtn);
@@ -190,9 +200,12 @@ public class WifiScannerFragment extends Fragment {
             BroadcastReceiver wifiExtra = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context c, Intent intent) {
-                    boolean isScanDone = wifiInfo.isScanDone();
-                    if(isScanDone){
-                        getExtraWifi();
+                    Activity activity = getActivity();
+                    if(activity!=null){
+                        boolean isScanDone = wifiInfo.isScanDone();
+                        if(isScanDone){
+                            getExtraWifi();
+                        }
                     }
                 }
             };
@@ -260,32 +273,34 @@ public class WifiScannerFragment extends Fragment {
         HashMap<String, ScanResult> scanResultHashMap = wifiInfo.getScanResultHashMap();
         Iterator hashMapIndex = scanResultHashMap.keySet().iterator();
 
-        this.wifiSecRate.setText(""+wifiInfo.getSecurityPoint(wifiInfo.getConnectedWifiscanResult()));
+        if(scanResultHashMap != null){
+            this.wifiSecRate.setText(""+wifiInfo.getSecurityPoint(wifiInfo.getConnectedWifiscanResult()));
 
-        while(hashMapIndex.hasNext()){
-            String key = (String) hashMapIndex.next();
-            TableRow tableRow = makeTableRow();
-            int securityPoint = wifiInfo.getSecurityPoint(scanResultHashMap.get(key));
+            while(hashMapIndex.hasNext()){
+                String key = (String) hashMapIndex.next();
+                TableRow tableRow = makeTableRow();
+                int securityPoint = wifiInfo.getSecurityPoint(scanResultHashMap.get(key));
 
-            TextView textView1 = makeTableText(tableFontSize, scanResultHashMap.get(key).SSID, false, false, columnWidth);
-            TextView textView2 = makeTableText(tableFontSize, ""+scanResultHashMap.get(key).frequency, false, false, columnWidth);
-            TextView textView3 = makeTableText(tableFontSize, ""+securityPoint, false, false, columnWidth);
-            TextView textView4 = makeTableText(tableFontSize, ""+scanResultHashMap.get(key).level, false, false, columnWidth);
-            Button detailBtn = makeDetailBtn(tableFontSize, scanResultHashMap.get(key));
+                TextView textView1 = makeTableText(tableFontSize, scanResultHashMap.get(key).SSID, false, false, columnWidth);
+                TextView textView2 = makeTableText(tableFontSize, ""+scanResultHashMap.get(key).frequency, false, false, columnWidth);
+                TextView textView3 = makeTableText(tableFontSize, ""+securityPoint, false, false, columnWidth);
+                TextView textView4 = makeTableText(tableFontSize, ""+scanResultHashMap.get(key).level, false, false, columnWidth);
+                Button detailBtn = makeDetailBtn(tableFontSize, scanResultHashMap.get(key));
 
-            if(rowBackgoundColorIndex%2 ==1){
-                tableRow.setBackgroundColor(colorForTableRow);
-                detailBtn.setBackgroundColor(colorForTableRow);
+                if(rowBackgoundColorIndex%2 ==1){
+                    tableRow.setBackgroundColor(colorForTableRow);
+                    detailBtn.setBackgroundColor(colorForTableRow);
+                }
+                rowBackgoundColorIndex++;
+
+                tableRow.addView(textView1);
+                tableRow.addView(textView2);
+                tableRow.addView(textView3);
+                tableRow.addView(textView4);
+                tableRow.addView(detailBtn);
+
+                wifiTable.addView(tableRow);
             }
-            rowBackgoundColorIndex++;
-
-            tableRow.addView(textView1);
-            tableRow.addView(textView2);
-            tableRow.addView(textView3);
-            tableRow.addView(textView4);
-            tableRow.addView(detailBtn);
-
-            wifiTable.addView(tableRow);
         }
 //        setProgressDialogState(false);
         loadingBar.setVisibility(View.GONE);

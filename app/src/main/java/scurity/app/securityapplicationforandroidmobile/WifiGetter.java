@@ -303,67 +303,75 @@ public class WifiGetter {
     }
 
     static int getSecurity(ScanResult result) {
-        String securityInfo = result.capabilities;
+        String securityInfo = null;
+        try{
+            securityInfo = result.capabilities;
+        }catch(NullPointerException e){
+            e.getLocalizedMessage();
+        }
+
         int securityScore = 0;
-        while(true){
-            if(isContain(securityInfo, "WEP")){
-                securityScore = securityScore + 1 ;
-                int keyIndex = securityInfo.indexOf("WEP");
-                String tempText = securityInfo.substring(0, keyIndex);
-                int lengthOfString = securityInfo.length();
-                tempText += securityInfo.substring(keyIndex+3, lengthOfString);
-                securityInfo = tempText;
-            }
-            else if(isContain(securityInfo, "WPA")){
-                securityScore += 2;
-                int keyIndex = securityInfo.indexOf("WPA");
-                String tempText = securityInfo.substring(0, keyIndex);
-                int lengthOfString = securityInfo.length();
-                tempText += securityInfo.substring(keyIndex+3, lengthOfString);
-                securityInfo = tempText;
-            }
-            else if(isContain(securityInfo, "WPA2")){
-                securityScore =+ 3 ;
-                int keyIndex = securityInfo.indexOf("WPA2");
-                String tempText = securityInfo.substring(0, keyIndex);
-                int lengthOfString = securityInfo.length();
-                tempText += securityInfo.substring(keyIndex+4, lengthOfString);
-                securityInfo = tempText;
-            }
-            else if(isContain(securityInfo, "WPA3")){
-                securityScore += 4 ;
-                int keyIndex = securityInfo.indexOf("WPA3");
-                String tempText = securityInfo.substring(0, keyIndex);
-                int lengthOfString = securityInfo.length();
-                tempText += securityInfo.substring(keyIndex+4, lengthOfString);
-                securityInfo = tempText;
-            }
-            else if(isContain(securityInfo, "PSK")){
-                ++securityScore;
-                int keyIndex = securityInfo.indexOf("PSK");
-                String tempText = securityInfo.substring(0, keyIndex);
-                int lengthOfString = securityInfo.length();
-                tempText += securityInfo.substring(keyIndex+3, lengthOfString);
-                securityInfo = tempText;
-            }
-            else if(isContain(securityInfo, "EAP")){
-                ++securityScore;
-                int keyIndex = securityInfo.indexOf("EAP");
-                String tempText = securityInfo.substring(0, keyIndex);
-                int lengthOfString = securityInfo.length();
-                tempText += securityInfo.substring(keyIndex+3, lengthOfString);
-                securityInfo = tempText;
-            }
-            else if(isContain(securityInfo, "WPS")){
-                ++securityScore;
-                int keyIndex = securityInfo.indexOf("WPS");
-                String tempText = securityInfo.substring(0, keyIndex);
-                int lengthOfString = securityInfo.length();
-                tempText += securityInfo.substring(keyIndex+3, lengthOfString);
-                securityInfo = tempText;
-            }
-            else{
-                break;
+        if(securityInfo != null){
+            while(true){
+                if(isContain(securityInfo, "WEP")){
+                    securityScore = securityScore + 1 ;
+                    int keyIndex = securityInfo.indexOf("WEP");
+                    String tempText = securityInfo.substring(0, keyIndex);
+                    int lengthOfString = securityInfo.length();
+                    tempText += securityInfo.substring(keyIndex+3, lengthOfString);
+                    securityInfo = tempText;
+                }
+                else if(isContain(securityInfo, "WPA")){
+                    securityScore += 2;
+                    int keyIndex = securityInfo.indexOf("WPA");
+                    String tempText = securityInfo.substring(0, keyIndex);
+                    int lengthOfString = securityInfo.length();
+                    tempText += securityInfo.substring(keyIndex+3, lengthOfString);
+                    securityInfo = tempText;
+                }
+                else if(isContain(securityInfo, "WPA2")){
+                    securityScore =+ 3 ;
+                    int keyIndex = securityInfo.indexOf("WPA2");
+                    String tempText = securityInfo.substring(0, keyIndex);
+                    int lengthOfString = securityInfo.length();
+                    tempText += securityInfo.substring(keyIndex+4, lengthOfString);
+                    securityInfo = tempText;
+                }
+                else if(isContain(securityInfo, "WPA3")){
+                    securityScore += 4 ;
+                    int keyIndex = securityInfo.indexOf("WPA3");
+                    String tempText = securityInfo.substring(0, keyIndex);
+                    int lengthOfString = securityInfo.length();
+                    tempText += securityInfo.substring(keyIndex+4, lengthOfString);
+                    securityInfo = tempText;
+                }
+                else if(isContain(securityInfo, "PSK")){
+                    ++securityScore;
+                    int keyIndex = securityInfo.indexOf("PSK");
+                    String tempText = securityInfo.substring(0, keyIndex);
+                    int lengthOfString = securityInfo.length();
+                    tempText += securityInfo.substring(keyIndex+3, lengthOfString);
+                    securityInfo = tempText;
+                }
+                else if(isContain(securityInfo, "EAP")){
+                    ++securityScore;
+                    int keyIndex = securityInfo.indexOf("EAP");
+                    String tempText = securityInfo.substring(0, keyIndex);
+                    int lengthOfString = securityInfo.length();
+                    tempText += securityInfo.substring(keyIndex+3, lengthOfString);
+                    securityInfo = tempText;
+                }
+                else if(isContain(securityInfo, "WPS")){
+                    ++securityScore;
+                    int keyIndex = securityInfo.indexOf("WPS");
+                    String tempText = securityInfo.substring(0, keyIndex);
+                    int lengthOfString = securityInfo.length();
+                    tempText += securityInfo.substring(keyIndex+3, lengthOfString);
+                    securityInfo = tempText;
+                }
+                else{
+                    break;
+                }
             }
         }
 

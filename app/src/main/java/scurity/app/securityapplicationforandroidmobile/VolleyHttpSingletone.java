@@ -12,7 +12,6 @@ import com.android.volley.toolbox.Volley;
 public class VolleyHttpSingletone {
     private static VolleyHttpSingletone instance;
     private RequestQueue requestQueue;
-    private ImageLoader imageLoader;
     private static Context ctx;
 
     private VolleyHttpSingletone(Context context) {
