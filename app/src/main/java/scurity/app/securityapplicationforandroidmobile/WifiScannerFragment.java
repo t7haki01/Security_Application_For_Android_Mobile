@@ -39,6 +39,7 @@ import com.android.volley.VolleyError;
 
 import org.w3c.dom.Text;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -56,12 +57,9 @@ public class WifiScannerFragment extends Fragment {
     int securityPointId;
     TextView wifiSecRate;
 
-
     public WifiScannerFragment() {
         // Required empty public constructor
     }
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -276,32 +274,34 @@ public class WifiScannerFragment extends Fragment {
         HashMap<String, ScanResult> scanResultHashMap = wifiInfo.getScanResultHashMap();
         Iterator hashMapIndex = scanResultHashMap.keySet().iterator();
 
-        this.wifiSecRate.setText(""+wifiInfo.getSecurityPoint(wifiInfo.getConnectedWifiscanResult()));
+        if(scanResultHashMap != null){
+            this.wifiSecRate.setText(""+wifiInfo.getSecurityPoint(wifiInfo.getConnectedWifiscanResult()));
 
-        while(hashMapIndex.hasNext()){
-            String key = (String) hashMapIndex.next();
-            TableRow tableRow = makeTableRow();
-            int securityPoint = wifiInfo.getSecurityPoint(scanResultHashMap.get(key));
+            while(hashMapIndex.hasNext()){
+                String key = (String) hashMapIndex.next();
+                TableRow tableRow = makeTableRow();
+                int securityPoint = wifiInfo.getSecurityPoint(scanResultHashMap.get(key));
 
-            TextView textView1 = makeTableText(tableFontSize, scanResultHashMap.get(key).SSID, false, false, columnWidth);
-            TextView textView2 = makeTableText(tableFontSize, ""+scanResultHashMap.get(key).frequency, false, false, columnWidth);
-            TextView textView3 = makeTableText(tableFontSize, ""+securityPoint, false, false, columnWidth);
-            TextView textView4 = makeTableText(tableFontSize, ""+scanResultHashMap.get(key).level, false, false, columnWidth);
-            Button detailBtn = makeDetailBtn(tableFontSize, scanResultHashMap.get(key));
+                TextView textView1 = makeTableText(tableFontSize, scanResultHashMap.get(key).SSID, false, false, columnWidth);
+                TextView textView2 = makeTableText(tableFontSize, ""+scanResultHashMap.get(key).frequency, false, false, columnWidth);
+                TextView textView3 = makeTableText(tableFontSize, ""+securityPoint, false, false, columnWidth);
+                TextView textView4 = makeTableText(tableFontSize, ""+scanResultHashMap.get(key).level, false, false, columnWidth);
+                Button detailBtn = makeDetailBtn(tableFontSize, scanResultHashMap.get(key));
 
-            if(rowBackgoundColorIndex%2 ==1){
-                tableRow.setBackgroundColor(colorForTableRow);
-                detailBtn.setBackgroundColor(colorForTableRow);
+                if(rowBackgoundColorIndex%2 ==1){
+                    tableRow.setBackgroundColor(colorForTableRow);
+                    detailBtn.setBackgroundColor(colorForTableRow);
+                }
+                rowBackgoundColorIndex++;
+
+                tableRow.addView(textView1);
+                tableRow.addView(textView2);
+                tableRow.addView(textView3);
+                tableRow.addView(textView4);
+                tableRow.addView(detailBtn);
+
+                wifiTable.addView(tableRow);
             }
-            rowBackgoundColorIndex++;
-
-            tableRow.addView(textView1);
-            tableRow.addView(textView2);
-            tableRow.addView(textView3);
-            tableRow.addView(textView4);
-            tableRow.addView(detailBtn);
-
-            wifiTable.addView(tableRow);
         }
 //        setProgressDialogState(false);
         loadingBar.setVisibility(View.GONE);
