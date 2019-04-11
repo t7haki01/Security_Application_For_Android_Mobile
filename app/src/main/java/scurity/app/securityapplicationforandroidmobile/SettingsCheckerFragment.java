@@ -94,12 +94,14 @@ public class SettingsCheckerFragment extends Fragment
 
         // Manager
         wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        //connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        // connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+
         // ToDO other managers
 
         // Handler for the switches (when you click on the toggle switches for the connections)
         WifiSwitchHandler();
+        LocationSwitchHandler();
         // TODO other switches
 
         // TEST
@@ -114,9 +116,10 @@ public class SettingsCheckerFragment extends Fragment
         super.onStart();
         // activate broadcast receiver on start
         IntentFilter intentFilterWifi = new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION);
-
+        IntentFilter intentFilterLocation = new IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION);
         // TODO other filters?
         context.registerReceiver(wifiStateReceiver, intentFilterWifi);
+        context.registerReceiver(locationStateReceiver, intentFilterLocation);
     }
 
     // Unregister broadcast receiver
@@ -124,6 +127,7 @@ public class SettingsCheckerFragment extends Fragment
     public void onStop() {
         super.onStop();
         context.unregisterReceiver(wifiStateReceiver);
+        context.unregisterReceiver(locationStateReceiver);
     }
 
     // Broadcast Receiver for WiFi state
@@ -143,6 +147,21 @@ public class SettingsCheckerFragment extends Fragment
                     switchWiFi.setChecked(false);
                     switchWiFi.setText("Off");
                     break;
+            }
+        }
+    };
+
+    // Broadcast Receiver for Location state
+    private BroadcastReceiver locationStateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) == true){
+                switchLocation.setChecked(true);
+                switchLocation.setText("On");
+            } else{
+                switchLocation.setChecked(false);
+                switchLocation.setText("Off");
             }
         }
     };
@@ -170,6 +189,24 @@ public class SettingsCheckerFragment extends Fragment
             switchWiFi.setText("Off");
         }
     }
+
+    // handling toggle Switch for Location
+    private void LocationSwitchHandler() {
+        switchLocation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked) {
+                    // TODO Forget it!! You can't turn on/off location programmatically!!!!!
+                    //locationManager.isLocationEnabled();
+                    switchLocation.setText("On");
+                } else {
+                    locationManager.setTestProviderEnabled("",false);
+                    switchLocation.setText("Off");
+                }
+            }
+        });
+    }
+
 
     // Get NFC status as String
     private String GetNFCStatus(){
