@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         context = getApplicationContext();
-
         // Set wifiScanFrag as first fragment
         fragmentManager = getSupportFragmentManager();
         wifiScanFrag = new WifiScannerFragment();
@@ -103,7 +102,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -143,8 +142,8 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_wifiscanner:
                 setTitle("WiFi Scanner");
                 wifiScanFrag = new WifiScannerFragment();
-                fragmentManager.beginTransaction().replace(
-                R.id.main_fragment, wifiScanFrag).commit();
+//                fragmentManager.beginTransaction().add()
+                fragmentManager.beginTransaction().replace(R.id.main_fragment, wifiScanFrag).commit();
                 break;
             case R.id.nav_settingschecker:
                 setTitle("Settings Checker");
