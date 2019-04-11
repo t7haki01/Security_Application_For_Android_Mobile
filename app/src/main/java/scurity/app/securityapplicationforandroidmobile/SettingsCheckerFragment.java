@@ -45,7 +45,8 @@ public class SettingsCheckerFragment extends Fragment
     private TextView txtBluetooth;
     private TextView txtLocation;
     private TextView txtNFC;
-    //Textview for testings TODO delete when finished
+
+    // TODO delete when finished
     private TextView txtTestings;
 
     // Toggle Switches
