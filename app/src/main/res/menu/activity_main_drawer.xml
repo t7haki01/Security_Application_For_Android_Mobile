@@ -24,6 +24,10 @@
             android:id="@+id/nav_batterystate"
             android:icon="@drawable/ic_menu_share"
             android:title="Battery State" />
+        <item
+            android:id="@+id/nav_basicinfo"
+            android:icon="@drawable/ic_menu_share"
+            android:title="Basic Info" />
 
     </group>
 

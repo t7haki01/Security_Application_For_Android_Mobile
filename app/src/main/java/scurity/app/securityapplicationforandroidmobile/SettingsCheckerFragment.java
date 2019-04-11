@@ -12,9 +12,7 @@ import android.net.wifi.WifiManager;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcManager;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v4.app.Fragment;
-import android.telephony.PhoneStateListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,7 +42,6 @@ public class SettingsCheckerFragment extends Fragment
     // TextViews
     private TextView txtPincode;
     private TextView txtWiFi;
-    private TextView txtMobileData;
     private TextView txtBluetooth;
     private TextView txtLocation;
     private TextView txtNFC;
@@ -84,21 +81,19 @@ public class SettingsCheckerFragment extends Fragment
 
         // TextFields assigned to View
         txtWiFi = view.findViewById(R.id.txt_wifi);
-        txtMobileData = view.findViewById(R.id.txt_mobile_data);
         txtBluetooth = view.findViewById(R.id.txt_bluetooth);
         txtLocation = view.findViewById(R.id.txt_location);
         txtNFC = view.findViewById(R.id.txt_nfc);
 
         // Switches assigned to View
         switchWiFi = view.findViewById(R.id.switch_wifi);
-        switchMobileData = view.findViewById(R.id.switch_mobile_data);
         switchBluetooth = view.findViewById(R.id.switch_bluetooth);
         switchNFC = view.findViewById(R.id.switch_nfc);
         switchLocation = view.findViewById(R.id.switch_location);
 
         // Manager
         wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        //connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
         // ToDO other managers
 
@@ -119,11 +114,8 @@ public class SettingsCheckerFragment extends Fragment
         // activate broadcast receiver on start
         IntentFilter intentFilterWifi = new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION);
 
-        //TODO funzt eigentlich, des konnst mitm WIFI zammlegen, weil de zwa schaun imma aufananedr
-        IntentFilter intentFilterMobileData = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         // TODO other filters?
         context.registerReceiver(wifiStateReceiver, intentFilterWifi);
-        context.registerReceiver(mobileDataStateReceiver, intentFilterMobileData);
     }
 
     // Unregister broadcast receiver
@@ -131,7 +123,6 @@ public class SettingsCheckerFragment extends Fragment
     public void onStop() {
         super.onStop();
         context.unregisterReceiver(wifiStateReceiver);
-        context.unregisterReceiver(mobileDataStateReceiver);
     }
 
     // Broadcast Receiver for WiFi state
@@ -154,48 +145,6 @@ public class SettingsCheckerFragment extends Fragment
             }
         }
     };
-
-    // Broadcast Receiver for mobile data state
-    private BroadcastReceiver mobileDataStateReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            boolean mobileDataAllowed = Settings.Secure.getInt(context.getContentResolver(),
-                    "mobile_data", 1) == 1;
-
-            if(mobileDataAllowed){
-                switchMobileData.setChecked(true);
-                switchMobileData.setText("On");
-            } else{
-                switchMobileData.setChecked(false);
-                switchMobileData.setText("Off");
-            }
-        }
-    };
-
-    // handling toggle Switch for MOBILE DATA
-    private void MobileDataSwitchHandler() {
-        switchMobileData.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (isChecked) {
-                    // TODO switch mobile data on
-                    switchMobileData.setText("On");
-                } else {
-                    // TODO switch mobile data off
-                    switchMobileData.setText("Off");
-                }
-            }
-        });
-        /*
-        if (wifiManager.isWifiEnabled()) {
-            switchWiFi.setChecked(true);
-            switchWiFi.setText("On");
-        } else {
-            switchWiFi.setChecked(false);
-            switchWiFi.setText("Off");
-        }
-        */
-    }
 
     // handling toggle Switch for WIFI
     private void WifiSwitchHandler() {
