@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity
     private UsageTrackerFragment usageTrackFrag;
     private TheftAlarmFragment theftAlarmFrag;
     private BatteryStateFragment batteryStateFrag;
+    private BasicInfoFragment basicInfoFrag;
     private AboutAppFragment aboutAppFrag;
     private boolean isWifiScanned = false;
 
@@ -169,6 +170,12 @@ public class MainActivity extends AppCompatActivity
                 batteryStateFrag = new BatteryStateFragment();
                 fragmentManager.beginTransaction().replace(
                         R.id.main_fragment, batteryStateFrag).commit();
+                break;
+            case R.id.nav_basicinfo:
+                setTitle("Basic Info");
+                basicInfoFrag = new BasicInfoFragment();
+                fragmentManager.beginTransaction().replace(
+                        R.id.main_fragment, basicInfoFrag).commit();
                 break;
             case R.id.nav_aboutapp:
                 setTitle("About SysKnife");
