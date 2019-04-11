@@ -62,40 +62,19 @@ public class TheftAlarmFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        this.context = getContext();
-        this.alarm = new MediaPlayer();
-        this.theftAlarmFragment = getView().findViewById(R.id.frame_theftAlarm);
-        this.componentName = new ComponentName(this.context, AdminForLock.class);
-        this.devicePolicyManager = (DevicePolicyManager) this.context.getSystemService(Context.DEVICE_POLICY_SERVICE);
+        context = getContext();
+        alarm = new MediaPlayer();
+        theftAlarmFragment = getView().findViewById(R.id.frame_theftAlarm);
+        componentName = new ComponentName(this.context, AdminForLock.class);
+        devicePolicyManager = (DevicePolicyManager) this.context.getSystemService(Context.DEVICE_POLICY_SERVICE);
 
-        if(!this.devicePolicyManager.isAdminActive(componentName)){
-            ((MainActivity) getActivity()).addAdminToDevice(this.componentName);
+        if(!devicePolicyManager.isAdminActive(componentName)){
+            makeAdminAble();
         }
-
-        LinearLayout layout = new LinearLayout(this.context);
-
-        Button stopBtn = new Button(this.context);
-        stopBtn.setText("Deactivate");
-        stopBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                WarningAlarm warningAlarm = new WarningAlarm();
-                warningAlarm.stop(context);
-            }
-        });
-
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-        stopBtn.setLayoutParams(params);
-
-        layout.setOrientation(LinearLayout.VERTICAL);
-
-        layout.addView(stopBtn);
-        this.theftAlarmFragment.addView(layout);
-
-
     }
+
     private void makeAdminAble(){
-        ((MainActivity) getActivity()).addAdminToDevice(this.componentName);
+        ((MainActivity) getActivity()).addAdminToDevice(componentName);
     }
+
 }
