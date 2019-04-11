@@ -28,12 +28,12 @@ public class TheftAlarmCheckReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("Action: " + intent.getAction() + "\n");
-        sb.append("URI: " + intent.toUri(Intent.URI_INTENT_SCHEME).toString() + "\n");
-        String log = sb.toString();
-        Log.d(TAG, log);
-        Toast.makeText(context, log, Toast.LENGTH_LONG).show();
+//        StringBuilder sb = new StringBuilder();
+//        sb.append("Action: " + intent.getAction() + "\n");
+//        sb.append("URI: " + intent.toUri(Intent.URI_INTENT_SCHEME).toString() + "\n");
+//        String log = sb.toString();
+//        Log.d(TAG, log);
+//        Toast.makeText(context, log, Toast.LENGTH_LONG).show();
 
         this.context = context;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -43,10 +43,7 @@ public class TheftAlarmCheckReceiver extends BroadcastReceiver {
         boolean isConnected = wifi != null && wifi.isConnectedOrConnecting() ||
                 mobile != null && mobile.isConnectedOrConnecting();
         if (isConnected) {
-            Toast.makeText(context,"Now Sysknife got the change of wifi state, connected, Check Wi-Fi Security and informations from Sysknife app", Toast.LENGTH_LONG).show();
             activateTheAlarm(context);
-        } else {
-            Toast.makeText(context,"Now Sysknife got the change of wifi state, disconnected", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -81,7 +78,7 @@ public class TheftAlarmCheckReceiver extends BroadcastReceiver {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // TODO: Handle error
-                        Log.d("Error", ""+error);
+                    error.getLocalizedMessage();
                     }
                 });
         VolleyHttpSingletone.getInstance(context).addToRequestQueue(jsonArrayRequest);

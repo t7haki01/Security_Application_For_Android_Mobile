@@ -195,8 +195,6 @@ public class WifiScannerFragment extends Fragment {
 
             wifiTable.addView(secondRow);
 
-            wifiInfo.wifiScan();
-
             BroadcastReceiver wifiExtra = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context c, Intent intent) {
@@ -212,6 +210,7 @@ public class WifiScannerFragment extends Fragment {
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
             context.registerReceiver(wifiExtra, intentFilter);
+            wifiInfo.wifiScan();
         }
         else{
             wifiTable.removeAllViews();
