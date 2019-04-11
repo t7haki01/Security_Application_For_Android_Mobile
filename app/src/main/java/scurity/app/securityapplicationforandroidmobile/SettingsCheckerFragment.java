@@ -88,9 +88,13 @@ public class SettingsCheckerFragment extends Fragment
 
         // Switches assigned to View
         switchWiFi = view.findViewById(R.id.switch_wifi);
+        switchWiFi.setEnabled(false);
         switchBluetooth = view.findViewById(R.id.switch_bluetooth);
+        switchBluetooth.setEnabled(false);
         switchNFC = view.findViewById(R.id.switch_nfc);
+        switchNFC.setEnabled(false);
         switchLocation = view.findViewById(R.id.switch_location);
+        switchLocation.setEnabled(false);
 
         // Manager
         wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
@@ -98,11 +102,6 @@ public class SettingsCheckerFragment extends Fragment
         locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
 
         // ToDO other managers
-
-        // Handler for the switches (when you click on the toggle switches for the connections)
-        WifiSwitchHandler();
-        LocationSwitchHandler();
-        // TODO other switches
 
         // TEST
         txtTestings = view.findViewById(R.id.txt_testings);
@@ -166,29 +165,7 @@ public class SettingsCheckerFragment extends Fragment
         }
     };
 
-    // handling toggle Switch for WIFI
-    private void WifiSwitchHandler() {
-        switchWiFi.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (isChecked) {
-                    wifiManager.setWifiEnabled(true);
-                    switchWiFi.setText("On");
-                } else {
-                    wifiManager.setWifiEnabled(false);
-                    switchWiFi.setText("Off");
-                }
-            }
-        });
 
-        if (wifiManager.isWifiEnabled()) {
-            switchWiFi.setChecked(true);
-            switchWiFi.setText("On");
-        } else {
-            switchWiFi.setChecked(false);
-            switchWiFi.setText("Off");
-        }
-    }
 
     // handling toggle Switch for Location
     private void LocationSwitchHandler() {
@@ -206,7 +183,6 @@ public class SettingsCheckerFragment extends Fragment
             }
         });
     }
-
 
     // Get NFC status as String
     private String GetNFCStatus(){
@@ -262,6 +238,32 @@ public class SettingsCheckerFragment extends Fragment
         // GPS (Location)
         txtLocation.setText(GetGpsStatus());
     }
+
+    /*
+    // handling toggle Switch for WIFI
+    private void WifiSwitchHandler() {
+        switchWiFi.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked) {
+                    wifiManager.setWifiEnabled(true);
+                    switchWiFi.setText("On");
+                } else {
+                    wifiManager.setWifiEnabled(false);
+                    switchWiFi.setText("Off");
+                }
+            }
+        });
+
+        if (wifiManager.isWifiEnabled()) {
+            switchWiFi.setChecked(true);
+            switchWiFi.setText("On");
+        } else {
+            switchWiFi.setChecked(false);
+            switchWiFi.setText("Off");
+        }
+    }
+    */
 
     // EVERYTHING DOWN HERE: Just to get IMEI of the device
     // NOT NEEDED AT THE MOMENT
