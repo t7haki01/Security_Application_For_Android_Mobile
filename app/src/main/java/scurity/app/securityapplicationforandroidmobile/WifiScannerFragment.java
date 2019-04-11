@@ -194,7 +194,6 @@ public class WifiScannerFragment extends Fragment {
             secondRow.addView(detailBtn);
 
             wifiTable.addView(secondRow);
-
             wifiInfo.wifiScan();
 
             BroadcastReceiver wifiExtra = new BroadcastReceiver() {

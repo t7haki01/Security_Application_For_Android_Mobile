@@ -202,9 +202,10 @@ public class WifiGetter {
         BroadcastReceiver wifiScanReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context c, Intent intent) {
+
 //                boolean success = intent.getBooleanExtra(
 //                        WifiManager.EXTRA_PREVIOUS_WIFI_STATE, false);
-//
+
                 boolean success = WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(intent.getAction());
 
                 Log.d("scan status from broad", ""+success);
@@ -223,6 +224,7 @@ public class WifiGetter {
         intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         context.registerReceiver(wifiScanReceiver, intentFilter);
 
+        wifiManager.startScan();
         boolean success = wifiManager.startScan();
         Log.d("scan status", ""+success);
         if (!success) {
