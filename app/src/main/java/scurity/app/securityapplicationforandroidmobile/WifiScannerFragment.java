@@ -6,13 +6,16 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.location.LocationManager;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -49,31 +52,34 @@ import java.util.Iterator;
 public class WifiScannerFragment extends Fragment {
     private Context context = null;
     private FrameLayout wifiFrame;
-    private TableLayout wifiTable;
+    private TableLayout wifiTable = null;
     private WifiGetter wifiInfo;
     Button wifiBtn;
     ProgressBar loadingBar;
     int securityPointId;
     TextView wifiSecRate;
+    View view = null;
 
     public WifiScannerFragment() {
         // Required empty public constructor
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_wifi_scanner, container, false);
+        if(view == null){
+            view = inflater.inflate(R.layout.fragment_wifi_scanner, container, false);
+        }
+        return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        if(wifiTable == null){
             context = getContext();
             Activity activity = getActivity();
             if(isAdded() && activity != null){
-
-                Log.d("From wifiFragment", ""+isAdded()+" and " + getActivity() + " and " + context);
-
                 wifiFrame = getView().findViewById(R.id.frame_wifiScanner);
                 wifiTable = getView().findViewById(R.id.wifiTable);
                 securityPointId = ViewCompat.generateViewId();
@@ -105,9 +111,22 @@ public class WifiScannerFragment extends Fragment {
             else{
                 getFragmentManager().executePendingTransactions();
             }
+        }
+        else{
+        }
+
     }
 
-    public void wifiBtnClicked(Context context){
+    void wifiBtnClicked(Context context){
+        if(Build.VERSION.SDK_INT >= 23){
+            statusCheck();
+        }else{
+            wifiBuilder(context);
+        }
+
+    }
+
+    public void wifiBuilder(Context context){
         wifiTable.removeAllViews();
 
         wifiInfo = new WifiGetter(context);
@@ -213,30 +232,32 @@ public class WifiScannerFragment extends Fragment {
             context.registerReceiver(wifiExtra, intentFilter);
         }
         else{
-            wifiTable.removeAllViews();
-
-            TableRow warnRow = new TableRow(context);
-            warnRow.setGravity(Gravity.CENTER_HORIZONTAL);
-            TableRow.LayoutParams warnParams = new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            warnRow.setLayoutParams(warnParams);
-
-            TextView warnText = new TextView(context);
-            warnText.setTextSize(20);
-
-            TableRow.LayoutParams warnTextParams = new TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            warnTextParams.setMargins(20,30,20,0);
-            warnTextParams.weight = Float.parseFloat("1");
-
-            warnText.setLayoutParams(warnParams);
-
-            warnText.setText("Currently WIFI is not connected or unable!");
-            warnText.setTextColor(getResources().getColor(R.color.colorAccent));
-
-            warnRow.addView(warnText);
-
-            wifiTable.addView(warnRow);
-
+            failMsg("Currently WIFI is not connected or unable!");
         }
+    }
+
+    private void failMsg(String msg){
+        wifiTable.removeAllViews();
+        TableRow warnRow = new TableRow(context);
+        warnRow.setGravity(Gravity.CENTER_HORIZONTAL);
+        TableRow.LayoutParams warnParams = new TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        warnRow.setLayoutParams(warnParams);
+
+        TextView warnText = new TextView(context);
+        warnText.setTextSize(20);
+
+        TableRow.LayoutParams warnTextParams = new TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        warnTextParams.setMargins(50,30,50,0);
+        warnTextParams.weight = Float.parseFloat("1");
+
+        warnText.setLayoutParams(warnParams);
+
+        warnText.setText(msg);
+        warnText.setTextColor(getResources().getColor(R.color.colorAccent));
+
+        warnRow.addView(warnText);
+
+        wifiTable.addView(warnRow);
     }
 
     public TextView makeTableText(int fontSize, String text, boolean isHead, boolean isEnd, int width){
@@ -301,22 +322,8 @@ public class WifiScannerFragment extends Fragment {
                 wifiTable.addView(tableRow);
             }
         }
-//        setProgressDialogState(false);
         loadingBar.setVisibility(View.GONE);
         wifiBtn.setVisibility(View.VISIBLE);
-    }
-
-    private void setProgressDialogState(boolean isDone){
-        ProgressDialog progressDialog = new ProgressDialog(context);
-        progressDialog.setTitle("Loading...");
-        progressDialog.setMessage("Scaning the Wifi near");
-        progressDialog.setCancelable(false);
-        if(isDone == true){
-            progressDialog.show();
-        }
-        else if(isDone == false){
-            progressDialog.dismiss();
-        }
     }
 
     private void rateSecurity(int securityPoint){
@@ -396,6 +403,36 @@ public class WifiScannerFragment extends Fragment {
         info += "\n\nState from manager: " + wifiInfo.getWifiManager().getWifiState() ;
         return info;
     }
+
+    public void statusCheck() {
+        final LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            buildAlertMessageNoGps();
+        }else{
+            wifiBuilder(context);
+        }
+    }
+
+    private void buildAlertMessageNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage("Your Location service seems to be disabled, please enable it to scan the WiFi around")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        dialog.cancel();
+                        failMsg("Location Service Disabled");
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }
+
 
 }
 

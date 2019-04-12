@@ -199,6 +199,7 @@ public class WifiGetter {
 
     public void wifiScan(){
         isScanDone = false;
+        wifiManager.startScan();
         BroadcastReceiver wifiScanReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context c, Intent intent) {
@@ -224,7 +225,6 @@ public class WifiGetter {
         intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         context.registerReceiver(wifiScanReceiver, intentFilter);
 
-        wifiManager.startScan();
         boolean success = wifiManager.startScan();
         Log.d("scan status", ""+success);
         if (!success) {
