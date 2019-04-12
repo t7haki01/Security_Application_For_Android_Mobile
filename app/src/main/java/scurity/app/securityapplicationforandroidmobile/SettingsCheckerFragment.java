@@ -1,5 +1,6 @@
 package scurity.app.securityapplicationforandroidmobile;
 
+import android.app.KeyguardManager;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,12 +13,12 @@ import android.net.wifi.WifiManager;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -27,14 +28,14 @@ import android.widget.TextView;
 public class SettingsCheckerFragment extends Fragment
     implements View.OnClickListener {
 
-    private int b = 0;
-
     // Button
     private Button btnCheck;
 
     // Member to check IMEI (not needed at the moment)
     //private TextView txtIMEI;
     //final int PERMISSION_READ_STATE = 0;
+
+    private int count = 1;
 
     // Context
     private Context context;
@@ -61,6 +62,7 @@ public class SettingsCheckerFragment extends Fragment
     private ConnectivityManager connectivityManager;
     private LocationManager locationManager;
     private BluetoothAdapter bluetoothAdapter;
+    private NfcAdapter nfcAdapter;
     private NfcManager nfcManager;
 
     // Constructor
@@ -89,6 +91,8 @@ public class SettingsCheckerFragment extends Fragment
         // Switches assigned to View
         switchWiFi = view.findViewById(R.id.switch_wifi);
         switchWiFi.setEnabled(false);
+        switchMobileData = view.findViewById(R.id.switch_mobiledata);
+        switchMobileData.setEnabled(false);
         switchBluetooth = view.findViewById(R.id.switch_bluetooth);
         switchBluetooth.setEnabled(false);
         switchNFC = view.findViewById(R.id.switch_nfc);
@@ -98,35 +102,39 @@ public class SettingsCheckerFragment extends Fragment
 
         // Manager
         wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        // connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+        nfcManager = (NfcManager) context.getSystemService(Context.NFC_SERVICE);
+        nfcAdapter = NfcAdapter.getDefaultAdapter(context);
+        // connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        // ToDO other managers
-
-        // TEST
         txtTestings = view.findViewById(R.id.txt_testings);
+
+        // Set initial state for switches
+        SetSwitchBluetooth();
+        SetSwitchLocation();
+        SetSwitchNfc();
+
+        CheckSettings();
 
         return view;
     }
 
-    // Register Broadcast Receiver
+    // Register Broadcast Receivers
     @Override
     public void onStart() {
         super.onStart();
-        // activate broadcast receiver on start
         IntentFilter intentFilterWifi = new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION);
-        IntentFilter intentFilterLocation = new IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION);
-        // TODO other filters?
+        IntentFilter intentFilterLocation = new IntentFilter(LocationManager.MODE_CHANGED_ACTION);
+        IntentFilter intentFilterMobileData = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        IntentFilter intentFilterBluetooth = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+        IntentFilter intentFilterNFC = new IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+
         context.registerReceiver(wifiStateReceiver, intentFilterWifi);
         context.registerReceiver(locationStateReceiver, intentFilterLocation);
-    }
-
-    // Unregister broadcast receiver
-    @Override
-    public void onStop() {
-        super.onStop();
-        context.unregisterReceiver(wifiStateReceiver);
-        context.unregisterReceiver(locationStateReceiver);
+        context.registerReceiver(mobileDataStateReceiver, intentFilterMobileData);
+        context.registerReceiver(bluetoothStateReceiver, intentFilterBluetooth);
+        context.registerReceiver(nfcStateReceiver, intentFilterNFC);
     }
 
     // Broadcast Receiver for WiFi state
@@ -154,89 +162,112 @@ public class SettingsCheckerFragment extends Fragment
     private BroadcastReceiver locationStateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            SetSwitchLocation();
+        }
+    };
 
-            if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) == true){
-                switchLocation.setChecked(true);
-                switchLocation.setText("On");
+    // Broadcast Receiver for mobile data state
+    // TODO Not shure if this really makes sense, mobiledata shows up unpredictably
+    private BroadcastReceiver mobileDataStateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            boolean mobileDataAllowed = Settings.Secure.getInt(context.getContentResolver(),
+                    "mobile_data", 1) == 1;
+
+            if(mobileDataAllowed){
+                switchMobileData.setChecked(true);
+                switchMobileData.setText("On");
             } else{
-                switchLocation.setChecked(false);
-                switchLocation.setText("Off");
+                switchMobileData.setChecked(false);
+                switchMobileData.setText("Off");
             }
         }
     };
 
+    // Broadcast Receiver for NFC state
+    private BroadcastReceiver nfcStateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            SetSwitchNfc();
+        }
+    };
 
+    // Broadcast Receiver for bluetooth state
+    private BroadcastReceiver bluetoothStateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            SetSwitchBluetooth();
+        }
+    };
 
-    // handling toggle Switch for Location
-    private void LocationSwitchHandler() {
-        switchLocation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (isChecked) {
-                    // TODO Forget it!! You can't turn on/off location programmatically!!!!!
-                    //locationManager.isLocationEnabled();
-                    switchLocation.setText("On");
-                } else {
-                    locationManager.setTestProviderEnabled("",false);
-                    switchLocation.setText("Off");
-                }
-            }
-        });
+    // Unregister all broadcast receivers
+    @Override
+    public void onStop() {
+        super.onStop();
+        context.unregisterReceiver(wifiStateReceiver);
+        context.unregisterReceiver(locationStateReceiver);
+        context.unregisterReceiver(mobileDataStateReceiver);
+        context.unregisterReceiver(bluetoothStateReceiver);
+        context.unregisterReceiver(nfcStateReceiver);
     }
 
-    // Get NFC status as String
-    private String GetNFCStatus(){
-        nfcManager = (NfcManager) context.getSystemService(Context.NFC_SERVICE);
-        NfcAdapter nfcAdapter = nfcManager.getDefaultAdapter();
+
+    // Check NFC state and set switch
+    private void SetSwitchNfc(){
+
         if(nfcAdapter.isEnabled() == true){
-            return "ON";
+            switchNFC.setChecked(true);
+            switchNFC.setText("On");
         } else{
-            return "OFF";
+            switchNFC.setChecked(false);
+            switchNFC.setText("Off");
         }
     }
 
+    // Check bluetooth state and set switch
     // Get Bluetooth status as String
-    private String GetBluetoothStatus(){
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    private void SetSwitchBluetooth(){
+
         if(bluetoothAdapter.isEnabled()){
-            return "ON";
-        } else {
-            return "OFF";
-        }
-    }
-
-    // Get GPS status as String
-    // (true = activated, false = deactivated)
-    private String GetGpsStatus(){
-        locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
-        if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) == true){
-            return "ON";
+            switchBluetooth.setChecked(true);
+            switchBluetooth.setText("On");
         } else{
-            return "OFF";
+            switchBluetooth.setChecked(false);
+            switchBluetooth.setText("Off");
         }
     }
 
-    // TODO onClick+Button and CheckAllSettings can be deleted after setting up BroadcastReceivers
-    // onClick method for the button
+    // Check location state and set switch
+    // Needed to set initial state of the switch and also for the broadcast receiver
+    private void SetSwitchLocation(){
+
+        if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) == true){
+            switchLocation.setChecked(true);
+            switchLocation.setText("On");
+        } else{
+            switchLocation.setChecked(false);
+            switchLocation.setText("Off");
+        }
+    }
+
+    // TODO Show up some infos or redirect user to settings
+    // onClick method for the Button
     @Override
     public void onClick(View view) {
-        CheckAllSettings();
+        // TODO handle click...
     }
 
-    private void CheckAllSettings(){
-        // TODO pincode
-        // TODO lockscreen
-        // TODO fingerprint
-        // TODO developer mode
+    // Check the current settings
+    private void CheckSettings(){
+        KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+        // true if a PIN, pattern or password is set or a SIM card is locked.
+        boolean pin = keyguardManager.isKeyguardSecure();
 
-        // Bluetooth
-        txtBluetooth.setText(GetBluetoothStatus());
-
-        // NFC
-        txtNFC.setText(GetNFCStatus());
-
-        // GPS (Location)
-        txtLocation.setText(GetGpsStatus());
+        // Check if Developer Mode is on/off
+        // 1 = on, 0 = off
+        int adb = Settings.Secure.getInt(context.getContentResolver(),
+                Settings.Global.DEVELOPMENT_SETTINGS_ENABLED , 0);
+        txtTestings.setText("DeveloperMode: " + adb + " Bla: " + pin );
     }
 
     /*
@@ -263,8 +294,8 @@ public class SettingsCheckerFragment extends Fragment
             switchWiFi.setText("Off");
         }
     }
-    */
 
+    */
     // EVERYTHING DOWN HERE: Just to get IMEI of the device
     // NOT NEEDED AT THE MOMENT
     /*
@@ -316,5 +347,4 @@ public class SettingsCheckerFragment extends Fragment
         txtIMEI.setText("IMEI: " + imei);
     }
     */
-
 }
