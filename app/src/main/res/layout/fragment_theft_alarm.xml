@@ -22,6 +22,7 @@
             android:padding="40dp"
             android:text=" When Your mobile is missing or stolen, activate the our theft alarm so it will ring the bell even if it is silent/mute mode or lower volume and it will automatically lock the phone so if it were locekd with pin or pattern then it would prevent other people from accessing your mobile."/>
         <Button
+            android:id="@+id/linkBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"

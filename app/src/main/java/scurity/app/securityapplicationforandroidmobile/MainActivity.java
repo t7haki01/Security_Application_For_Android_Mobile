@@ -12,10 +12,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity
 
     // Fragments
     private FragmentManager fragmentManager;
-    private WifiScannerFragment wifiScanFrag;
+    private WifiScannerFragment wifiScanFrag = null;
     private SettingsCheckerFragment settingCheckFrag;
     private UsageTrackerFragment usageTrackFrag;
     private TheftAlarmFragment theftAlarmFrag;
@@ -138,13 +139,17 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
         switch (id) {
             case R.id.nav_wifiscanner:
                 setTitle("WiFi Scanner");
-                wifiScanFrag = new WifiScannerFragment();
-//                fragmentManager.beginTransaction().add()
-                fragmentManager.beginTransaction().replace(R.id.main_fragment, wifiScanFrag).commit();
+                if(wifiScanFrag == null){
+                    wifiScanFrag = new WifiScannerFragment();
+                }
+
+                fragmentTransaction.replace(R.id.main_fragment, wifiScanFrag);
+                fragmentTransaction.commit();
                 break;
             case R.id.nav_settingschecker:
                 setTitle("Settings Checker");
@@ -160,9 +165,16 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_theftalarm:
                 setTitle("Theft Alarm");
-                theftAlarmFrag = new TheftAlarmFragment();
-                fragmentManager.beginTransaction().replace(
-                        R.id.main_fragment, theftAlarmFrag).commit();
+                if(theftAlarmFrag == null){
+                    theftAlarmFrag = new TheftAlarmFragment();
+                }
+//                if(!theftAlarmFrag.isAdded()){
+//                    fragmentTransaction.add(R.id.main_fragment, theftAlarmFrag);
+//                }
+//                hideAllFragments();
+//                fragmentTransaction.show(theftAlarmFrag);
+                fragmentTransaction.replace(R.id.main_fragment, theftAlarmFrag);
+                fragmentTransaction.commit();
                 break;
             case R.id.nav_batterystate:
                 setTitle("Battery State");
@@ -186,7 +198,7 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

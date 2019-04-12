@@ -52,31 +52,34 @@ import java.util.Iterator;
 public class WifiScannerFragment extends Fragment {
     private Context context = null;
     private FrameLayout wifiFrame;
-    private TableLayout wifiTable;
+    private TableLayout wifiTable = null;
     private WifiGetter wifiInfo;
     Button wifiBtn;
     ProgressBar loadingBar;
     int securityPointId;
     TextView wifiSecRate;
+    View view = null;
 
     public WifiScannerFragment() {
         // Required empty public constructor
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_wifi_scanner, container, false);
+        if(view == null){
+            view = inflater.inflate(R.layout.fragment_wifi_scanner, container, false);
+        }
+        return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        if(wifiTable == null){
             context = getContext();
             Activity activity = getActivity();
             if(isAdded() && activity != null){
-
-                Log.d("From wifiFragment", ""+isAdded()+" and " + getActivity() + " and " + context);
-
                 wifiFrame = getView().findViewById(R.id.frame_wifiScanner);
                 wifiTable = getView().findViewById(R.id.wifiTable);
                 securityPointId = ViewCompat.generateViewId();
@@ -108,6 +111,10 @@ public class WifiScannerFragment extends Fragment {
             else{
                 getFragmentManager().executePendingTransactions();
             }
+        }
+        else{
+        }
+
     }
 
     void wifiBtnClicked(Context context){
@@ -315,22 +322,8 @@ public class WifiScannerFragment extends Fragment {
                 wifiTable.addView(tableRow);
             }
         }
-//        setProgressDialogState(false);
         loadingBar.setVisibility(View.GONE);
         wifiBtn.setVisibility(View.VISIBLE);
-    }
-
-    private void setProgressDialogState(boolean isDone){
-        ProgressDialog progressDialog = new ProgressDialog(context);
-        progressDialog.setTitle("Loading...");
-        progressDialog.setMessage("Scaning the Wifi near");
-        progressDialog.setCancelable(false);
-        if(isDone == true){
-            progressDialog.show();
-        }
-        else if(isDone == false){
-            progressDialog.dismiss();
-        }
     }
 
     private void rateSecurity(int securityPoint){

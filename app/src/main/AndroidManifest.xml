@@ -16,7 +16,7 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="WiFi Scanner"
+        android:label="SysKnife"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -46,24 +46,7 @@
                 <action android:name="android.net.wifi.CHANGE_NETWORK_STATE_CHANGED" />
                 <action android:name="android.net.wifi.STATE_CHANGE" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-
-                <!--<action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>-->
             </intent-filter>
-            <!--<intent-filter>-->
-                <!--<action android:name="android.app.action.CHANGE_WIFI_STATE" />-->
-            <!--</intent-filter>-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.app.action.CHANGE_CHANGE_WIFI_MULTICAST_STATE" />-->
-            <!--</intent-filter>-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.app.action.REBOOT" />-->
-            <!--</intent-filter>-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.app.action.BOOT_COMLETED" />-->
-            <!--</intent-filter>-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.app.action.CONNECTIVITY_CHANGE" />-->
-            <!--</intent-filter>-->
         </receiver>
 
         <activity
