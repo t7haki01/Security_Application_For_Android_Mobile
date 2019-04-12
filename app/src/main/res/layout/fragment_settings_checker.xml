@@ -24,7 +24,7 @@
     <TableLayout
         android:id="@+id/tbl_settings"
         android:layout_width="0dp"
-        android:layout_height="140dp"
+        android:layout_height="98dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:stretchColumns="*"
@@ -41,20 +41,23 @@
                 android:padding="5dp"
                 android:text="Pincode" />
 
+            <TextView android:padding="5dp" />
+
             <TextView
                 android:id="@+id/txt_pincode"
+                android:layout_marginLeft="17dp"
                 android:padding="5dp"
-                android:text="–" />
+                android:textAlignment="textStart" />
 
         </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
         <TableRow
             android:layout_width="match_parent"
@@ -64,10 +67,14 @@
                 android:padding="5dp"
                 android:text="Developer Mode" />
 
-            <TextView
-                android:id="@+id/txt_dev_mode"
-                android:padding="5dp"
-                android:text="–" />
+            <TextView android:padding="5dp" />
+
+            <Switch
+                android:id="@+id/switch_devmode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:switchMinWidth="60dp" />
 
         </TableRow>
     </TableLayout>
@@ -112,8 +119,7 @@
 
             <TextView
                 android:id="@+id/txt_wifi"
-                android:padding="5dp"
-                android:text="–" />
+                android:padding="5dp" />
 
             <Switch
                 android:id="@+id/switch_wifi"
@@ -134,8 +140,7 @@
 
             <TextView
                 android:id="@+id/txt_mobiledata"
-                android:padding="5dp"
-                android:text="–" />
+                android:padding="5dp" />
 
             <Switch
                 android:id="@+id/switch_mobiledata"
@@ -155,8 +160,7 @@
 
             <TextView
                 android:id="@+id/txt_bluetooth"
-                android:padding="5dp"
-                android:text="–" />
+                android:padding="5dp" />
 
             <Switch
                 android:id="@+id/switch_bluetooth"
@@ -177,8 +181,7 @@
 
             <TextView
                 android:id="@+id/txt_nfc"
-                android:padding="5dp"
-                android:text="–" />
+                android:padding="5dp" />
 
             <Switch
                 android:id="@+id/switch_nfc"
@@ -199,8 +202,7 @@
 
             <TextView
                 android:id="@+id/txt_location"
-                android:padding="5dp"
-                android:text="–" />
+                android:padding="5dp" />
 
             <Switch
                 android:id="@+id/switch_location"

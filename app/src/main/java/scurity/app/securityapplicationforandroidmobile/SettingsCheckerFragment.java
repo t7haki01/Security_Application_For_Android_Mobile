@@ -57,6 +57,7 @@ public class SettingsCheckerFragment extends Fragment
     private Switch switchBluetooth;
     private Switch switchNFC;
     private Switch switchLocation;
+    private Switch switchDevMode;
 
     // Manager for Connections
     private WifiManager wifiManager;
@@ -78,7 +79,7 @@ public class SettingsCheckerFragment extends Fragment
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_settings_checker, container, false);
-        context = view.getContext();
+            context = view.getContext();
 
         // Button
         btnCheck = (Button) view.findViewById(R.id.btn_check_settings);
@@ -86,13 +87,14 @@ public class SettingsCheckerFragment extends Fragment
 
         // TextFields assigned to View
         txtPincode = view.findViewById(R.id.txt_pincode);
-        txtDevMode = view.findViewById(R.id.txt_dev_mode);
         txtWiFi = view.findViewById(R.id.txt_wifi);
         txtBluetooth = view.findViewById(R.id.txt_bluetooth);
         txtLocation = view.findViewById(R.id.txt_location);
         txtNFC = view.findViewById(R.id.txt_nfc);
 
         // Switches assigned to View
+        switchDevMode = view.findViewById(R.id.switch_devmode);
+        switchDevMode.setEnabled(false);
         switchWiFi = view.findViewById(R.id.switch_wifi);
         switchWiFi.setEnabled(false);
         switchMobileData = view.findViewById(R.id.switch_mobiledata);
@@ -171,7 +173,7 @@ public class SettingsCheckerFragment extends Fragment
     };
 
     // Broadcast Receiver for mobile data state
-    // TODO Not shure if this really makes sense, mobiledata shows up unpredictably
+    // TODO Not shure if this really makes sense, mobile data shows up unpredictably
     private BroadcastReceiver mobileDataStateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -265,6 +267,7 @@ public class SettingsCheckerFragment extends Fragment
     private void CheckSettings(){
         // true if a PIN, pattern or password is set or a SIM card is locked.
         String secureString = keyguardManager.isKeyguardSecure() ? "Set" : "Not set";
+        txtPincode.setText(secureString);
 
         // Check if Developer Mode is on/off
         // 1 = on, 0 = off
@@ -273,16 +276,13 @@ public class SettingsCheckerFragment extends Fragment
 
         String devModeString;
 
-        if(devMode == 1){
-            devModeString = "On";
-        } else if (devMode == 1){
-            devModeString = "Off";
+        if(devMode == 0){
+            switchDevMode.setChecked(false);
+            switchDevMode.setText("Off");
         } else {
-            devModeString = "???";
+            switchDevMode.setChecked(true);
+            switchDevMode.setText("On");
         }
-
-        txtPincode.setText(secureString);
-        txtDevMode.setText(devModeString);
     }
 
     /*
