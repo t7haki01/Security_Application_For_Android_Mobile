@@ -42,6 +42,7 @@ public class SettingsCheckerFragment extends Fragment
 
     // TextViews
     private TextView txtPincode;
+    private TextView txtDevMode;
     private TextView txtWiFi;
     private TextView txtBluetooth;
     private TextView txtLocation;
@@ -64,6 +65,7 @@ public class SettingsCheckerFragment extends Fragment
     private BluetoothAdapter bluetoothAdapter;
     private NfcAdapter nfcAdapter;
     private NfcManager nfcManager;
+    private KeyguardManager keyguardManager;
 
     // Constructor
     public SettingsCheckerFragment() {
@@ -83,6 +85,8 @@ public class SettingsCheckerFragment extends Fragment
         btnCheck.setOnClickListener(this);
 
         // TextFields assigned to View
+        txtPincode = view.findViewById(R.id.txt_pincode);
+        txtDevMode = view.findViewById(R.id.txt_dev_mode);
         txtWiFi = view.findViewById(R.id.txt_wifi);
         txtBluetooth = view.findViewById(R.id.txt_bluetooth);
         txtLocation = view.findViewById(R.id.txt_location);
@@ -106,7 +110,7 @@ public class SettingsCheckerFragment extends Fragment
         locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
         nfcManager = (NfcManager) context.getSystemService(Context.NFC_SERVICE);
         nfcAdapter = NfcAdapter.getDefaultAdapter(context);
-        // connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        keyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
 
         txtTestings = view.findViewById(R.id.txt_testings);
 
@@ -259,15 +263,26 @@ public class SettingsCheckerFragment extends Fragment
 
     // Check the current settings
     private void CheckSettings(){
-        KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
         // true if a PIN, pattern or password is set or a SIM card is locked.
-        boolean pin = keyguardManager.isKeyguardSecure();
+        String secureString = keyguardManager.isKeyguardSecure() ? "Set" : "Not set";
 
         // Check if Developer Mode is on/off
         // 1 = on, 0 = off
-        int adb = Settings.Secure.getInt(context.getContentResolver(),
+        int devMode = Settings.Secure.getInt(context.getContentResolver(),
                 Settings.Global.DEVELOPMENT_SETTINGS_ENABLED , 0);
-        txtTestings.setText("DeveloperMode: " + adb + " Bla: " + pin );
+
+        String devModeString;
+
+        if(devMode == 1){
+            devModeString = "On";
+        } else if (devMode == 1){
+            devModeString = "Off";
+        } else {
+            devModeString = "???";
+        }
+
+        txtPincode.setText(secureString);
+        txtDevMode.setText(devModeString);
     }
 
     /*
