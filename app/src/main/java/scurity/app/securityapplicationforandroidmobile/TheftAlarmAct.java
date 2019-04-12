@@ -38,7 +38,7 @@ public class TheftAlarmAct {
          * kihun 3.4.2019
          * */
         //This is for the stoppable way of implementing
-        warningAlarm.play(context, R.raw.ring);
+        warningAlarm.play(context, R.raw.merged);
 
         /**This is kinda unstoppable unless alarm state is changed and receiever check again since mediaplayer already released so can not get the stop context*/
 //        if( alarm == null){
@@ -77,11 +77,16 @@ public class TheftAlarmAct {
         if(this.devicePolicyManager.isAdminActive(this.componentName)){
             this.devicePolicyManager.lockNow();
         }
-//        else{
-//            ((MainActivity) getActivity()).addAdminToDevice(this.componentName);
-//            WindowManager.LayoutParams params = getActivity().getWindow().getAttributes();
-//            params.screenBrightness = 0;
-//            getActivity().getWindow().setAttributes(params);
-//        }
+        /**
+         * Just in case user does not allow the admin policy to our app
+         * Mimic the lock function with brightness as zero
+         * it used to be automatically locked in lower version of android
+         * */
+        else{
+            ((MainActivity) context).addAdminToDevice(this.componentName);
+            WindowManager.LayoutParams params = ((MainActivity)context).getWindow().getAttributes();
+            params.screenBrightness = 0;
+            ((MainActivity) context).getWindow().setAttributes(params);
+        }
     }
 }
