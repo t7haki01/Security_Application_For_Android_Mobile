@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity
                 fragmentTransaction.commit();
                 break;
             case R.id.nav_settingschecker:
-                setTitle("Settings Checker");
+                setTitle("Settings & Connections");
                 settingCheckFrag = new SettingsCheckerFragment();
                 fragmentManager.beginTransaction().replace(
                         R.id.main_fragment, settingCheckFrag).commit();

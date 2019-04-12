@@ -25,6 +25,10 @@ import android.widget.TextView;
 /**
  * A simple {@link Fragment} subclass.
  */
+
+    // TODO Da Button bringt die zu die Settings,
+    // TODO ba die Settings kust owa a direkt zu die Einstellungen leiten
+
 public class SettingsCheckerFragment extends Fragment
     implements View.OnClickListener {
 
