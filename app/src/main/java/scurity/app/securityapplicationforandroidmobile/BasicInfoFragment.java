@@ -1,6 +1,7 @@
 package scurity.app.securityapplicationforandroidmobile;
 
 
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,10 +18,10 @@ import android.widget.TextView;
  * A simple {@link Fragment} subclass.
  */
 public class BasicInfoFragment extends Fragment {
-
+    private TextView textView;
 
     public BasicInfoFragment() {
-        // Required empty public constructor
+
     }
 
 
@@ -33,24 +34,17 @@ public class BasicInfoFragment extends Fragment {
         /*
             TODO HERE STARTS THE MAGIC...
          */
-
-        return view;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         DisplayMetrics metrics = new DisplayMetrics();
-        getActivity().getWindowManager()
-        .getDefaultDisplay().getMetrics(metrics);
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
+        textView = view.findViewById(R.id.text_view);
 
-        float height=metrics.heightPixels/metrics.xdpi;
-        float width=metrics.widthPixels/metrics.ydpi;
-//To do. It is needed to add the fragment to somewhere now
-        TextView textView =  getView().findViewById(R.id.basic);
+        double height=metrics.heightPixels/metrics.xdpi;
+        double width=metrics.widthPixels/metrics.ydpi;
+
 
         textView.setText(
-                "The screen size is:"+(float)Math.sqrt(height*height+width*width) +"\n" +
+                "The screen size is:"+Math.sqrt(height*height+width*width) +"\n" +
                         "Manufacturer: " + Build.MANUFACTURER +"\n"
 
                         +  "Brand:" + Build.BRAND+"\n"
@@ -67,8 +61,10 @@ public class BasicInfoFragment extends Fragment {
                         +  "Build ID: " + Build.ID+"\n"
                         +  "Build time: " + Build.TIME +"\n"
                         +  "Fingerprint: " + Build.FINGERPRINT+"\n"
-
         );
 
+        return view;
     }
+
+
 }
