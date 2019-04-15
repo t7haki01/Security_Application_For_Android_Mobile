@@ -49,12 +49,11 @@ public class SettingsCheckerFragment extends Fragment
     private Context context;
 
     // TextViews
-    private TextView txtPincode, txtEncryption, txtDevMode,
-            txtWiFi, txtBluetooth, txtLocation, txtNFC;
+    private TextView txtPincode, txtEncryption, txtDevMode;
 
     // Toggle Switches
     private Switch switchWiFi, switchMobileData, switchBluetooth,
-            switchNFC, switchLocation, switchDevMode;
+            switchNFC, switchLocation;
 
     // Manager for Connections
     private WifiManager wifiManager;
@@ -85,14 +84,9 @@ public class SettingsCheckerFragment extends Fragment
         // TextFields assigned to View
         txtPincode = view.findViewById(R.id.txt_pincode);
         txtEncryption = view.findViewById(R.id.txt_encryption);
-        txtWiFi = view.findViewById(R.id.txt_wifi);
-        txtBluetooth = view.findViewById(R.id.txt_bluetooth);
-        txtLocation = view.findViewById(R.id.txt_location);
-        txtNFC = view.findViewById(R.id.txt_nfc);
+        txtDevMode = view.findViewById(R.id.txt_dev_mode);
 
         // Switches assigned to View
-        switchDevMode = view.findViewById(R.id.switch_devmode);
-        switchDevMode.setEnabled(false);
         switchWiFi = view.findViewById(R.id.switch_wifi);
         switchWiFi.setEnabled(false);
         switchMobileData = view.findViewById(R.id.switch_mobiledata);
@@ -123,30 +117,24 @@ public class SettingsCheckerFragment extends Fragment
         return view;
     }
 
-
     // TODO Show up some infos or redirect user to settings
     // Button: onClick handler
     @Override
     public void onClick(View view) {
-        Toast.makeText(context,"ENCRYPTION: " + getDeviceEncryptionStatus(context), Toast.LENGTH_SHORT).show();
+        Toast.makeText(context,"REDIRECT ME TO THE SETTINGS, PLEASE!", Toast.LENGTH_SHORT).show();
     }
 
     // Check all settings
     private void checkSettings(){
         checkPincode();
         checkDeveloperMode();
-
-        if (getDeviceEncryptionStatus(context) < 2 ){
-            txtEncryption.setText("NOT ENCRYPTED");
-        } else{
-            txtEncryption.setText("ENCRYPTED");
-        }
+        checkDeviceEncryptionStatus(context);
     }
 
     // Check if user has set a pincode
     private void checkPincode(){
         // true if a PIN, pattern or password is set or a SIM card is locked.
-        String secureString = keyguardManager.isKeyguardSecure() ? "Set" : "Not set";
+        String secureString = keyguardManager.isKeyguardSecure() ? "SET" : "NOT SET";
         txtPincode.setText(secureString);
     }
 
@@ -159,11 +147,9 @@ public class SettingsCheckerFragment extends Fragment
         String devModeString;
 
         if(devMode == 0){
-            switchDevMode.setChecked(false);
-            switchDevMode.setText("Off");
+            txtDevMode.setText("OFF");
         } else {
-            switchDevMode.setChecked(true);
-            switchDevMode.setText("On");
+            txtDevMode.setText("ON");
         }
     }
 
@@ -172,7 +158,7 @@ public class SettingsCheckerFragment extends Fragment
     // 2: ENCRYPTION_STATUS_ACTIVATING, 3: ENCRYPTION_STATUS_ACTIVE
     // 4: ENCRYPTION_STATUS_ACTIVE_DEFAULT_KEY, 5: ENCRYPTION_STATUS_ACTIVE_PER_USER
     @TargetApi(11)
-    private static int getDeviceEncryptionStatus(Context context)
+    private void checkDeviceEncryptionStatus(Context context)
     {
         int status = DevicePolicyManager.ENCRYPTION_STATUS_UNSUPPORTED;
 
@@ -183,7 +169,12 @@ public class SettingsCheckerFragment extends Fragment
                 status = dpm.getStorageEncryptionStatus();
             }
         }
-        return status;
+
+        if (status < 2 ){
+            txtEncryption.setText("NOT ENCRYPTED");
+        } else{
+            txtEncryption.setText("ENCRYPTED");
+        }
     }
 
 
@@ -317,7 +308,6 @@ public class SettingsCheckerFragment extends Fragment
             switchLocation.setText("Off");
         }
     }
-
 
     /*
     // handling toggle Switch for WIFI
