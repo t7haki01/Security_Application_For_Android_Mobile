@@ -16,7 +16,8 @@
         android:fontFamily="sans-serif-black"
         android:paddingLeft="3dp"
         android:text="Settings"
-        android:textSize="18sp"
+        android:textColor="@color/colorPrimary"
+        android:textSize="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -24,8 +25,9 @@
     <TableLayout
         android:id="@+id/tbl_settings"
         android:layout_width="0dp"
-        android:layout_height="98dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:stretchColumns="*"
         app:layout_constraintEnd_toEndOf="parent"
@@ -39,15 +41,21 @@
 
             <TextView
                 android:padding="5dp"
-                android:text="PIN / Pattern" />
+                android:text="PIN-Code / Pattern"
+                android:textSize="16sp" />
 
-            <TextView android:padding="5dp" />
+            <ImageView
+                android:id="@+id/img_pin"
+                android:layout_gravity="center"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/tick" />
 
             <TextView
                 android:id="@+id/txt_pincode"
                 android:layout_marginLeft="17dp"
                 android:padding="5dp"
-                android:textAlignment="textStart" />
+                android:textAlignment="textEnd" />
 
         </TableRow>
 
@@ -57,15 +65,21 @@
 
             <TextView
                 android:padding="5dp"
-                android:text="Encryption Status" />
+                android:text="Encryption Status"
+                android:textSize="16sp" />
 
-            <TextView android:padding="5dp" />
+            <ImageView
+                android:id="@+id/img_encryption"
+                android:layout_gravity="center"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/tick" />
 
             <TextView
                 android:id="@+id/txt_encryption"
                 android:layout_marginLeft="17dp"
                 android:padding="5dp"
-                android:textAlignment="textStart" />
+                android:textAlignment="textEnd" />
 
         </TableRow>
 
@@ -83,42 +97,66 @@
 
             <TextView
                 android:padding="5dp"
-                android:text="Developer Mode" />
+                android:text="Developer Mode"
+                android:textSize="16sp" />
 
-            <TextView android:padding="5dp" />
-
-            <Switch
-                android:id="@+id/switch_devmode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <ImageView
+                android:id="@+id/img_dev_mode"
                 android:layout_gravity="center"
-                android:switchMinWidth="60dp" />
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/warning_red" />
+
+            <TextView
+                android:id="@+id/txt_dev_mode"
+                android:layout_marginLeft="17dp"
+                android:padding="5dp"
+                android:textAlignment="textEnd" />
+
 
         </TableRow>
     </TableLayout>
 
+    <Button
+        android:id="@+id/btn_check_settings"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/button_background"
+        android:text="GO TO SETTINGS"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/lbl_connections"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tbl_settings" />
 
     <TextView
         android:id="@+id/lbl_connections"
         android:layout_width="0dp"
         android:layout_height="27dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
         android:fontFamily="sans-serif-black"
         android:paddingLeft="3dp"
         android:text="Connections"
-        android:textSize="18sp"
+        android:textColor="@color/colorPrimary"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.512"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tbl_settings" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_check_settings" />
 
     <TableLayout
         android:id="@+id/tbl_connections"
         android:layout_width="0dp"
-        android:layout_height="150dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:stretchColumns="*"
         app:layout_constraintEnd_toEndOf="parent"
@@ -131,20 +169,23 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:layout_width="118dp"
                 android:padding="5dp"
-                android:text="WiFi" />
+                android:text="WiFi"
+                android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/txt_wifi"
-                android:padding="5dp" />
+            <ImageView
+                android:id="@+id/img_wifi"
+                android:layout_gravity="center"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/warning_yellow" />
 
             <Switch
                 android:id="@+id/switch_wifi"
-                android:layout_gravity="center"
-                android:switchMinWidth="60dp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:switchMinWidth="80dp" />
         </TableRow>
 
         <TableRow
@@ -152,20 +193,22 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:layout_width="118dp"
                 android:padding="5dp"
-                android:text="Mobile Data" />
+                android:text="Mobile Data"
+                android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/txt_mobiledata"
-                android:padding="5dp" />
-
+            <ImageView
+                android:id="@+id/img_mobile_data"
+                android:layout_gravity="center"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/warning_yellow" />
             <Switch
                 android:id="@+id/switch_mobiledata"
-                android:layout_gravity="center"
-                android:switchMinWidth="60dp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:switchMinWidth="80dp" />
         </TableRow>
 
         <TableRow
@@ -174,18 +217,22 @@
 
             <TextView
                 android:padding="5dp"
-                android:text="Bluetooth" />
+                android:text="Bluetooth"
+                android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/txt_bluetooth"
-                android:padding="5dp" />
+            <ImageView
+                android:id="@+id/img_bluetooth"
+                android:layout_gravity="center"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/warning_yellow" />
 
             <Switch
                 android:id="@+id/switch_bluetooth"
-                android:layout_gravity="center"
-                android:switchMinWidth="60dp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:switchMinWidth="80dp" />
 
         </TableRow>
 
@@ -195,18 +242,22 @@
 
             <TextView
                 android:padding="5dp"
-                android:text="NFC" />
+                android:text="NFC"
+                android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/txt_nfc"
-                android:padding="5dp" />
+            <ImageView
+                android:id="@+id/img_nfc"
+                android:layout_gravity="center"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/warning_yellow" />
 
             <Switch
                 android:id="@+id/switch_nfc"
-                android:layout_gravity="center"
-                android:switchMinWidth="60dp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:switchMinWidth="80dp" />
 
         </TableRow>
 
@@ -216,47 +267,40 @@
 
             <TextView
                 android:padding="5dp"
-                android:text="Location" />
+                android:text="Location"
+                android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/txt_location"
-                android:padding="5dp" />
+            <ImageView
+                android:id="@+id/img_location"
+                android:layout_gravity="center"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/warning_yellow" />
 
             <Switch
                 android:id="@+id/switch_location"
-                android:layout_gravity="center"
-                android:switchMinWidth="60dp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:switchMinWidth="80dp" />
 
         </TableRow>
     </TableLayout>
 
-
     <Button
-        android:id="@+id/btn_check_settings"
-        android:layout_width="140dp"
-        android:layout_height="60dp"
-        android:layout_marginBottom="16dp"
+        android:id="@+id/btn_connection"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:background="@drawable/button_background"
-        android:text="GO TO SETTINGS"
+        android:text="GO TO CONNECTIONS"
         android:textAlignment="center"
         android:textColor="@android:color/white"
+        android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/txt_testings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/btn_check_settings"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tbl_connections" />
-
 </android.support.constraint.ConstraintLayout>
