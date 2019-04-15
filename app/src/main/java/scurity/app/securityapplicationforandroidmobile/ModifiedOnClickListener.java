@@ -8,6 +8,7 @@ public class ModifiedOnClickListener implements View.OnClickListener
 
     ScanResult someValue;
     String someString;
+    int someInt;
 
     public ModifiedOnClickListener(ScanResult someValue) {
         this.someValue = someValue;
@@ -15,6 +16,10 @@ public class ModifiedOnClickListener implements View.OnClickListener
 
     public ModifiedOnClickListener(String someString) {
         this.someString = someString;
+    }
+
+    public ModifiedOnClickListener(int someInt) {
+        this.someInt = someInt;
     }
 
     @Override

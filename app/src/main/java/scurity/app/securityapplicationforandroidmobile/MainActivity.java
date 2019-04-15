@@ -49,10 +49,6 @@ public class MainActivity extends AppCompatActivity
     private AboutAppFragment aboutAppFrag;
     private boolean isWifiScanned = false;
 
-    public boolean isWifiScanned() {
-        return isWifiScanned;
-    }
-
     public void setWifiScanned(boolean wifiScanned) {
         isWifiScanned = wifiScanned;
     }
@@ -69,6 +65,11 @@ public class MainActivity extends AppCompatActivity
 
         if (Build.VERSION.SDK_INT >= 23) {
             // Marshmallow+ Permission APIs
+            /*
+            * Since Marshmallow, Android changed policy for the "better user privacy",
+            *So we(app) need to acquire permission from user directly with asking "?nicely"
+            * to scan wifi near since it is able to get personal location with Wifi information near(such as RSSI, IP and so on)
+            * **/
             permissionHandler();
         }
 
