@@ -48,7 +48,7 @@ public class TheftAlarmCheckReceiver extends BroadcastReceiver {
     }
 
     private void activateTheAlarm(Context context){
-        String url = "http://www.students.oamk.fi/~t7haki01/sysknife/index.php/api/TheftAlarm/mobiles/id/1";
+        String url = "http://www.students.oamk.fi/~t7haki01/sysknife/index.php/api/TheftAlarm/mobiles/id/2";
         try{
             theftAlarmAct = new TheftAlarmAct(context);
         }catch(IllegalStateException e){
