@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity
     private TheftAlarmFragment theftAlarmFrag;
     private BatteryStateFragment batteryStateFrag;
     private BasicInfoFragment basicInfoFrag;
+    private EmergencyFragment emergencyFragment;
     private AboutAppFragment aboutAppFrag;
     private boolean isWifiScanned = false;
 
@@ -187,6 +188,15 @@ public class MainActivity extends AppCompatActivity
                 basicInfoFrag = new BasicInfoFragment();
                 fragmentManager.beginTransaction().replace(
                         R.id.main_fragment, basicInfoFrag).commit();
+                break;
+            case R.id.nav_emergency:
+                setTitle("Emergency");
+                if(emergencyFragment == null){
+                    emergencyFragment = new EmergencyFragment();
+                }
+
+                fragmentTransaction.replace(R.id.main_fragment, emergencyFragment);
+                fragmentTransaction.commit();
                 break;
             case R.id.nav_aboutapp:
                 setTitle("About SysKnife");

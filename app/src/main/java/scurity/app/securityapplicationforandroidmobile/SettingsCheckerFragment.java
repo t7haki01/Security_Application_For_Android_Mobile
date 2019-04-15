@@ -1,6 +1,8 @@
 package scurity.app.securityapplicationforandroidmobile;
 
+import android.annotation.TargetApi;
 import android.app.KeyguardManager;
+import android.app.admin.DevicePolicyManager;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,6 +14,7 @@ import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
@@ -21,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,23 +49,12 @@ public class SettingsCheckerFragment extends Fragment
     private Context context;
 
     // TextViews
-    private TextView txtPincode;
-    private TextView txtDevMode;
-    private TextView txtWiFi;
-    private TextView txtBluetooth;
-    private TextView txtLocation;
-    private TextView txtNFC;
-
-    // TODO delete when finished
-    private TextView txtTestings;
+    private TextView txtPincode, txtEncryption, txtDevMode,
+            txtWiFi, txtBluetooth, txtLocation, txtNFC;
 
     // Toggle Switches
-    private Switch switchWiFi;
-    private Switch switchMobileData;
-    private Switch switchBluetooth;
-    private Switch switchNFC;
-    private Switch switchLocation;
-    private Switch switchDevMode;
+    private Switch switchWiFi, switchMobileData, switchBluetooth,
+            switchNFC, switchLocation, switchDevMode;
 
     // Manager for Connections
     private WifiManager wifiManager;
@@ -83,7 +76,7 @@ public class SettingsCheckerFragment extends Fragment
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_settings_checker, container, false);
-            context = view.getContext();
+        context = view.getContext();
 
         // Button
         btnCheck = (Button) view.findViewById(R.id.btn_check_settings);
@@ -91,6 +84,7 @@ public class SettingsCheckerFragment extends Fragment
 
         // TextFields assigned to View
         txtPincode = view.findViewById(R.id.txt_pincode);
+        txtEncryption = view.findViewById(R.id.txt_encryption);
         txtWiFi = view.findViewById(R.id.txt_wifi);
         txtBluetooth = view.findViewById(R.id.txt_bluetooth);
         txtLocation = view.findViewById(R.id.txt_location);
@@ -118,19 +112,84 @@ public class SettingsCheckerFragment extends Fragment
         nfcAdapter = NfcAdapter.getDefaultAdapter(context);
         keyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
 
-        txtTestings = view.findViewById(R.id.txt_testings);
+        // Set initial state for the switches
+        setSwitchBluetooth();
+        setSwitchLocation();
+        setSwitchNfc();
 
-        // Set initial state for switches
-        SetSwitchBluetooth();
-        SetSwitchLocation();
-        SetSwitchNfc();
-
-        CheckSettings();
+        // Check all current settings
+        checkSettings();
 
         return view;
     }
 
-    // Register Broadcast Receivers
+
+    // TODO Show up some infos or redirect user to settings
+    // Button: onClick handler
+    @Override
+    public void onClick(View view) {
+        Toast.makeText(context,"ENCRYPTION: " + getDeviceEncryptionStatus(context), Toast.LENGTH_SHORT).show();
+    }
+
+    // Check all settings
+    private void checkSettings(){
+        checkPincode();
+        checkDeveloperMode();
+
+        if (getDeviceEncryptionStatus(context) < 2 ){
+            txtEncryption.setText("NOT ENCRYPTED");
+        } else{
+            txtEncryption.setText("ENCRYPTED");
+        }
+    }
+
+    // Check if user has set a pincode
+    private void checkPincode(){
+        // true if a PIN, pattern or password is set or a SIM card is locked.
+        String secureString = keyguardManager.isKeyguardSecure() ? "Set" : "Not set";
+        txtPincode.setText(secureString);
+    }
+
+    // Check if device is in developer mode
+    private void checkDeveloperMode(){
+        // 1 = on, 0 = off
+        int devMode = Settings.Secure.getInt(context.getContentResolver(),
+                Settings.Global.DEVELOPMENT_SETTINGS_ENABLED , 0);
+
+        String devModeString;
+
+        if(devMode == 0){
+            switchDevMode.setChecked(false);
+            switchDevMode.setText("Off");
+        } else {
+            switchDevMode.setChecked(true);
+            switchDevMode.setText("On");
+        }
+    }
+
+    // Get Encryption status
+    // 0: ECRYPTION_STATUS_UNSUPPORTED, 1: ENCRYPTION_STATUS_INACTIVE
+    // 2: ENCRYPTION_STATUS_ACTIVATING, 3: ENCRYPTION_STATUS_ACTIVE
+    // 4: ENCRYPTION_STATUS_ACTIVE_DEFAULT_KEY, 5: ENCRYPTION_STATUS_ACTIVE_PER_USER
+    @TargetApi(11)
+    private static int getDeviceEncryptionStatus(Context context)
+    {
+        int status = DevicePolicyManager.ENCRYPTION_STATUS_UNSUPPORTED;
+
+        if (Build.VERSION.SDK_INT >= 11) {
+            final DevicePolicyManager dpm =
+                    (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
+            if (dpm != null) {
+                status = dpm.getStorageEncryptionStatus();
+            }
+        }
+        return status;
+    }
+
+
+
+    // BROADCAST RECEIVERS
+    // Register Broadcast Receivers for Connection-Changes
     @Override
     public void onStart() {
         super.onStart();
@@ -172,12 +231,11 @@ public class SettingsCheckerFragment extends Fragment
     private BroadcastReceiver locationStateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            SetSwitchLocation();
+            setSwitchLocation();
         }
     };
 
     // Broadcast Receiver for mobile data state
-    // TODO Not shure if this really makes sense, mobile data shows up unpredictably
     private BroadcastReceiver mobileDataStateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -198,7 +256,7 @@ public class SettingsCheckerFragment extends Fragment
     private BroadcastReceiver nfcStateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            SetSwitchNfc();
+            setSwitchNfc();
         }
     };
 
@@ -206,7 +264,7 @@ public class SettingsCheckerFragment extends Fragment
     private BroadcastReceiver bluetoothStateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            SetSwitchBluetooth();
+            setSwitchBluetooth();
         }
     };
 
@@ -223,7 +281,7 @@ public class SettingsCheckerFragment extends Fragment
 
 
     // Check NFC state and set switch
-    private void SetSwitchNfc(){
+    private void setSwitchNfc(){
 
         if(nfcAdapter.isEnabled() == true){
             switchNFC.setChecked(true);
@@ -236,7 +294,7 @@ public class SettingsCheckerFragment extends Fragment
 
     // Check bluetooth state and set switch
     // Get Bluetooth status as String
-    private void SetSwitchBluetooth(){
+    private void setSwitchBluetooth(){
 
         if(bluetoothAdapter.isEnabled()){
             switchBluetooth.setChecked(true);
@@ -249,7 +307,7 @@ public class SettingsCheckerFragment extends Fragment
 
     // Check location state and set switch
     // Needed to set initial state of the switch and also for the broadcast receiver
-    private void SetSwitchLocation(){
+    private void setSwitchLocation(){
 
         if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) == true){
             switchLocation.setChecked(true);
@@ -260,34 +318,6 @@ public class SettingsCheckerFragment extends Fragment
         }
     }
 
-    // TODO Show up some infos or redirect user to settings
-    // onClick method for the Button
-    @Override
-    public void onClick(View view) {
-        // TODO handle click...
-    }
-
-    // Check the current settings
-    private void CheckSettings(){
-        // true if a PIN, pattern or password is set or a SIM card is locked.
-        String secureString = keyguardManager.isKeyguardSecure() ? "Set" : "Not set";
-        txtPincode.setText(secureString);
-
-        // Check if Developer Mode is on/off
-        // 1 = on, 0 = off
-        int devMode = Settings.Secure.getInt(context.getContentResolver(),
-                Settings.Global.DEVELOPMENT_SETTINGS_ENABLED , 0);
-
-        String devModeString;
-
-        if(devMode == 0){
-            switchDevMode.setChecked(false);
-            switchDevMode.setText("Off");
-        } else {
-            switchDevMode.setChecked(true);
-            switchDevMode.setText("On");
-        }
-    }
 
     /*
     // handling toggle Switch for WIFI
