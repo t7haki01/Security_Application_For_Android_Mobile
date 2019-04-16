@@ -9,8 +9,14 @@
     <!-- TODO: Update blank fragment layout -->
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+      >
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
 
+            android:scaleType="centerCrop"
+            android:src="@drawable/logo_10ptrans" />
 
         <Button
             android:id="@+id/btn_dial"
