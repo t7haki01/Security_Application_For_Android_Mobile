@@ -185,7 +185,7 @@ public class WifiScannerFragment extends Fragment {
             headSecPoint.setGravity(Gravity.CENTER);
             TextView headSignal = makeTableText(tableFontSzie, "Strength\n(Signal)", true, false, columnWidth);
             headSignal.setGravity(Gravity.CENTER);
-            TextView headLink = makeTableText(tableFontSzie, "Check\nDetail", true, true, columnWidth);
+            TextView headLink = makeTableText(tableFontSzie, "+\n ", true, true, columnWidth, true);
             headLink.setGravity(Gravity.CENTER);
 
             firstRow.addView(headName);
@@ -227,10 +227,10 @@ public class WifiScannerFragment extends Fragment {
             wifiRssi.setGravity(Gravity.CENTER);
 
             Button detailBtn = new Button(context);
-            detailBtn.setText("Detail");
+            detailBtn.setText("+");
             detailBtn.setTextSize(tableFontSzie);
             TableRow.LayoutParams params  = new TableRow.LayoutParams(100, ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.weight=Float.parseFloat("0.2");
+            params.weight=Float.parseFloat("0.1");
             detailBtn.setLayoutParams(params);
             detailBtn.setBackgroundColor(colorForBtn);
             final String info = getAllConnectedWifiInfo();
@@ -302,6 +302,24 @@ public class WifiScannerFragment extends Fragment {
         textView.setText(text);
         TableRow.LayoutParams params  = new TableRow.LayoutParams(width, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.weight=Float.parseFloat("0.2");
+        if(!isEnd){
+            params.setMargins(0,0,5,0);
+        }
+        if(isHead)
+            textView.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+
+        textView.setLayoutParams(params);
+        return textView;
+    }
+
+    public TextView makeTableText(int fontSize, String text, boolean isHead, boolean isEnd, int width, boolean isDetail){
+        TextView textView = new TextView(context);
+        textView.setTextSize(fontSize);
+        textView.setText(text);
+        TableRow.LayoutParams params  = new TableRow.LayoutParams(width, ViewGroup.LayoutParams.WRAP_CONTENT);
+        if(isDetail){
+            params.weight=Float.parseFloat("0.1");
+        }
         if(!isEnd){
             params.setMargins(0,0,5,0);
         }
@@ -511,10 +529,10 @@ public class WifiScannerFragment extends Fragment {
         int colorForBtn = getResources().getColor(R.color.colorForDetailBtn);
 
         Button detailBtn = new Button(context);
-        detailBtn.setText("Detail");
+        detailBtn.setText("+");
         detailBtn.setTextSize(tableFontSize);
         TableRow.LayoutParams params  = new TableRow.LayoutParams(100, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.weight=Float.parseFloat("0.2");
+        params.weight=Float.parseFloat("0.1");
         detailBtn.setLayoutParams(params);
 
         detailBtn.setBackgroundColor(colorForBtn);
@@ -557,8 +575,6 @@ public class WifiScannerFragment extends Fragment {
         final AlertDialog alert = builder.create();
         alert.show();
     }
-
-
 }
 
 
