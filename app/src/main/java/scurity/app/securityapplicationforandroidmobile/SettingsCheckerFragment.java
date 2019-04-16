@@ -49,7 +49,7 @@ public class SettingsCheckerFragment extends Fragment
     private Context context;
 
     // TextViews
-    private TextView txtPincode, txtEncryption, txtDevMode;
+    private TextView txtPincode, txtEncryption, txtDevMode, txtUnknownSource;
 
     // Int Icon sources
     private final int GREEN_TICK = R.drawable.tick;
@@ -57,7 +57,7 @@ public class SettingsCheckerFragment extends Fragment
     private final int RED_WARNING = R.drawable.warning_red;
 
     //ImageViews
-    private ImageView imgPin, imgEncrypState, imgDevMode, imgWifi,
+    private ImageView imgPin, imgEncrypState, imgDevMode, imgUnknownSource, imgWifi,
         imgMobileData, imgBluetooth, imgNFC, imgLocation;
 
     // Toggle Switches
@@ -96,11 +96,13 @@ public class SettingsCheckerFragment extends Fragment
         txtPincode = view.findViewById(R.id.txt_pincode);
         txtEncryption = view.findViewById(R.id.txt_encryption);
         txtDevMode = view.findViewById(R.id.txt_dev_mode);
+        txtUnknownSource = view.findViewById(R.id.txt_unknownsource);
 
         // ImageViews
         imgPin = view.findViewById(R.id.img_pin);
         imgEncrypState = view.findViewById(R.id.img_encryption);
         imgDevMode = view.findViewById(R.id.img_dev_mode);
+        imgUnknownSource = view.findViewById(R.id.img_unknownsource);
         imgWifi = view.findViewById(R.id.img_wifi);
         imgMobileData = view.findViewById(R.id.img_mobile_data);
         imgBluetooth = view.findViewById(R.id.img_bluetooth);
@@ -160,6 +162,7 @@ public class SettingsCheckerFragment extends Fragment
         checkPincode();
         checkDeveloperMode();
         checkDeviceEncryptionStatus(context);
+        checkUnknownSources();
     }
 
     // Check if user has set a pincode
@@ -215,7 +218,25 @@ public class SettingsCheckerFragment extends Fragment
             imgDevMode.setImageResource(GREEN_TICK);
         } else {
             txtDevMode.setText("ON");
-            imgDevMode.setImageResource(RED_WARNING);
+            imgDevMode.setImageResource(YELLOW_WARNING);
+        }
+    }
+
+    // check if app installation from unknown sources is allowed
+    private void checkUnknownSources(){
+        boolean unknownSource = false;
+        if (Build.VERSION.SDK_INT < 17) {
+            unknownSource = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.INSTALL_NON_MARKET_APPS, 0) == 1;
+        } else {
+            unknownSource = Settings.Global.getInt(context.getContentResolver(), Settings.Global.INSTALL_NON_MARKET_APPS, 0) == 1;
+        }
+
+        if(unknownSource){
+            txtUnknownSource.setText("ALLOWED");
+            imgUnknownSource.setImageResource(YELLOW_WARNING);
+        } else {
+            txtUnknownSource.setText("NOT ALLOWED");
+            imgUnknownSource.setImageResource(GREEN_TICK);
         }
     }
 

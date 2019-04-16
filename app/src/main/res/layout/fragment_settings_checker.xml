@@ -91,13 +91,6 @@
 
         </TableRow>
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
 
         <TableRow
             android:layout_width="match_parent"
@@ -105,23 +98,44 @@
 
             <TextView
                 android:padding="5dp"
-                android:text="Developer Mode"
+                android:text="Installing Apps \nform unknown sources"
                 android:textSize="16sp" />
 
             <ImageView
-                android:id="@+id/img_dev_mode"
+                android:id="@+id/img_unknownsource"
                 android:layout_gravity="center"
                 android:layout_width="20dp"
                 android:layout_height="20dp" />
 
             <TextView
-                android:id="@+id/txt_dev_mode"
+                android:id="@+id/txt_unknownsource"
+                android:layout_height="match_parent"
                 android:layout_marginLeft="17dp"
                 android:padding="5dp"
-                android:textAlignment="textEnd" />
-
-
+                android:gravity="center_vertical|right" />
         </TableRow>
+
+        <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:padding="5dp"
+            android:text="Developer Mode"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/img_dev_mode"
+            android:layout_gravity="center"
+            android:layout_width="20dp"
+            android:layout_height="20dp" />
+
+        <TextView
+            android:id="@+id/txt_dev_mode"
+            android:layout_marginLeft="17dp"
+            android:padding="5dp"
+            android:textAlignment="textEnd" />
+    </TableRow>
     </TableLayout>
 
     <Button
