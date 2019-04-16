@@ -81,8 +81,6 @@ public class WifiScannerFragment extends Fragment {
         // Inflate the layout for this fragment
         if(view == null){
             view = inflater.inflate(R.layout.fragment_wifi_scanner, container, false);
-        }else{
-            scanBtnCheck();
         }
         return view;
     }

@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,43 +14,215 @@
 
     <!-- TODO: Update blank fragment layout -->
     <android.support.constraint.ConstraintLayout
+        android:visibility="gone"
+        android:id="@+id/unregistered_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp">
 
         <LinearLayout
             android:id="@+id/layout_first"
-            android:layout_marginTop="60dp"
-            android:layout_width="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:orientation="horizontal">
             <ImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="@dimen/imageWidth"
+                android:layout_height="@dimen/imageHeight"
                 android:src="@drawable/huuto3"/>
             <TextView
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Register for Free"
-                android:textSize="30dp"/>
+                android:text="Register your mobile for free"
+                android:textSize="@dimen/fontSize"/>
         </LinearLayout>
 
         <LinearLayout
+            android:layout_marginTop="20dp"
             android:orientation="horizontal"
             android:id="@+id/layout_second"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/layout_third"
+            app:layout_constraintTop_toBottomOf="@+id/layout_first">
+            <ImageView
+                android:layout_width="@dimen/imageWidth"
+                android:layout_height="@dimen/imageHeight"
+                android:src="@drawable/tick"/>
+            <TextView
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/fontSize"
+                android:text="Make Backup for your Mobile"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            android:id="@+id/layout_third"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_second"
+            app:layout_constraintBottom_toTopOf="@+id/layout_fourth">
+            <ImageView
+                android:layout_width="@dimen/imageWidth"
+                android:layout_height="@dimen/imageHeight"
+                android:src="@drawable/tick"/>
+            <TextView
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/fontSize"
+                android:text="Easy-Click within 10 seconds"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            android:id="@+id/layout_fourth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_third"
+            app:layout_constraintBottom_toTopOf="@+id/layout_fifth">
+            <ImageView
+                android:layout_width="@dimen/imageWidth"
+                android:layout_height="@dimen/imageHeight"
+                android:src="@drawable/tick"/>
+            <TextView
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/fontSize"
+                android:text="Activate Wherever you are"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            android:id="@+id/layout_fifth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_fourth">
+            <ImageView
+                android:layout_width="@dimen/imageWidth"
+                android:layout_height="@dimen/imageHeight"
+                android:src="@drawable/tick"/>
+            <TextView
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/fontSize"
+                android:text="Force Auto-Lock with Max Volume Alarm"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="30dp"
+            android:orientation="horizontal"
+            android:id="@+id/theftAlarm_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layout_first">
-            <ImageView
+            app:layout_constraintTop_toBottomOf="@+id/layout_fifth">
+            <Button
+                android:background="@color/colorAccent"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="GO to Prepare Future for you Mpobile"
+                android:textColor="@android:color/white"
+                android:padding="20dp"
+                android:id="@+id/signUp_btn"/>
+
         </LinearLayout>
     </android.support.constraint.ConstraintLayout>
 
+    <!--from here registered-->
+
+    <android.support.constraint.ConstraintLayout
+        android:visibility="gone"
+        android:id="@+id/registered_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp">
+        <ImageView
+            android:id="@+id/registered_slogan"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/first_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:src="@drawable/safety_slogan"/>
+        <LinearLayout
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:id="@+id/first_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/registered_slogan"
+            app:layout_constraintBottom_toTopOf="@id/second_layout">
+            <ImageView
+                android:layout_width="@dimen/imageWidth"
+                android:layout_height="@dimen/imageHeight"
+                android:src="@drawable/tick"/>
+            <TextView
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/fontSize"
+                android:text="Your mobile is Protected by TheftAlarm service"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:id="@+id/second_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/first_layout">
+            <ImageView
+                android:layout_width="@dimen/imageWidth"
+                android:layout_height="@dimen/imageHeight"
+                android:src="@drawable/tick"/>
+            <TextView
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/fontSize"
+                android:text="Wherever you are, Activate easily on our site if needed!"/>
+        </LinearLayout>
+
+    </android.support.constraint.ConstraintLayout>
+
+
 </FrameLayout>
+</android.support.v4.widget.NestedScrollView>
