@@ -298,7 +298,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/button_background"
-        android:text="SWITCH TO AIRPLANE MODE"
+        android:text="GO TO NETWORK &amp; INTERNET"
         android:textAlignment="center"
         android:textColor="@android:color/white"
         android:textSize="16sp"
