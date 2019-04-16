@@ -68,13 +68,6 @@ public class TheftAlarmFragment extends Fragment {
         theftAlarmFragment = getView().findViewById(R.id.frame_theftAlarm);
         componentName = new ComponentName(this.context, AdminForLock.class);
         devicePolicyManager = (DevicePolicyManager) this.context.getSystemService(Context.DEVICE_POLICY_SERVICE);
-        linkBtn = getView().findViewById(R.id.linkBtn);
-        linkBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                linkToSite();
-            }
-        });
 
         if(!devicePolicyManager.isAdminActive(componentName)){
             makeAdminAble();
@@ -88,6 +81,10 @@ public class TheftAlarmFragment extends Fragment {
         Uri uri = Uri.parse("http://www.students.oamk.fi/~t7haki01/sysknife/demo/site/index");
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
+    }
+
+    private void showUnregistered(){
+
     }
 
 }
