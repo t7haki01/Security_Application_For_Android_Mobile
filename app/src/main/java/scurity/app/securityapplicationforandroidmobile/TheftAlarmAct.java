@@ -13,6 +13,14 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
 public class TheftAlarmAct {
 
     private MediaPlayer alarm = null;
@@ -89,4 +97,52 @@ public class TheftAlarmAct {
             ((MainActivity) context).getWindow().setAttributes(params);
         }
     }
+
+    public void checkRegister(){
+        String url = "http://www.students.oamk.fi/~t7haki01/sysknife/index.php/api/TheftAlarm/mobiles/id/123";
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest
+                (Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        String id = null;
+                        try{
+                            Log.d("Response: ", response.getJSONObject(0).getString("id"));
+                            Log.d("Response: ", ""+response.getJSONObject(0).get("id"));
+                            Log.d("Response", response+"");
+                            try{
+                                id = response.getJSONObject(0).getString("id");
+                            }catch(NullPointerException e){
+                                e.getLocalizedMessage();
+                            }
+                        }catch(JSONException e){
+                            e.printStackTrace();
+                        }
+
+                        if(id == null){
+                            setRegiState(false);
+                        }
+                        else{
+                            setRegiState(true);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO: Handle error
+                        error.getLocalizedMessage();
+                    }
+                });
+        VolleyHttpSingletone.getInstance(context).addToRequestQueue(jsonArrayRequest);
+    }
+
+    void setRegiState(Boolean isRegistered){
+        if(isRegistered){
+            ((MainActivity) context).setRegistered(true);
+        }else{
+            ((MainActivity) context).setRegistered(false);
+        }
+    }
+
 }

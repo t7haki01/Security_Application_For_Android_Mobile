@@ -48,26 +48,56 @@ public class TheftAlarmFragment extends Fragment {
     private ComponentName componentName;
     private DevicePolicyManager devicePolicyManager;
     private Button linkBtn = null;
+    private ConstraintLayout unregisteredLayout = null;
+    private ConstraintLayout registeredLayout = null;
+
+    private View view = null;
 
     public TheftAlarmFragment() {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        if(view == null){
+            view = inflater.inflate(R.layout.fragment_theft_alarm, container, false);
+        }
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_theft_alarm, container, false);
+        return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        if(context == null){
+            alarm = new MediaPlayer();
+        }
         context = getContext();
-        alarm = new MediaPlayer();
+        new TheftAlarmAct(context).checkRegister();
+
         theftAlarmFragment = getView().findViewById(R.id.frame_theftAlarm);
+        unregisteredLayout = getView().findViewById(R.id.unregistered_layout);
+        registeredLayout = getView().findViewById(R.id.registered_layout);
         componentName = new ComponentName(this.context, AdminForLock.class);
         devicePolicyManager = (DevicePolicyManager) this.context.getSystemService(Context.DEVICE_POLICY_SERVICE);
+
+        linkBtn = getView().findViewById(R.id.signUp_btn);
+        linkBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                linkToSite();
+            }
+        });
+
+        boolean isRegistered = ((MainActivity) context).isRegistered();
+
+        if(!isRegistered){
+            unregisteredLayout.setVisibility(View.VISIBLE);
+            registeredLayout.setVisibility(View.GONE);
+        }else{
+            unregisteredLayout.setVisibility(View.GONE);
+            registeredLayout.setVisibility(View.VISIBLE);
+        }
 
         if(!devicePolicyManager.isAdminActive(componentName)){
             makeAdminAble();
@@ -77,14 +107,10 @@ public class TheftAlarmFragment extends Fragment {
     private void makeAdminAble(){
         ((MainActivity) getActivity()).addAdminToDevice(componentName);
     }
+
     private void linkToSite(){
-        Uri uri = Uri.parse("http://www.students.oamk.fi/~t7haki01/sysknife/demo/site/index");
+        Uri uri = Uri.parse("http://www.students.oamk.fi/~t7haki01/sysknife/demo/site/pricing");
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
     }
-
-    private void showUnregistered(){
-
-    }
-
 }
