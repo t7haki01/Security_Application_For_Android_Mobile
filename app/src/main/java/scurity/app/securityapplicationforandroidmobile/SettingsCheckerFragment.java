@@ -22,9 +22,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -37,7 +37,7 @@ public class SettingsCheckerFragment extends Fragment
     implements View.OnClickListener {
 
     // Button
-    private Button btnCheck;
+    private Button btnGoToSettings, btnGoToConnections;
 
     // Member to check IMEI (not needed at the moment)
     //private TextView txtIMEI;
@@ -49,12 +49,20 @@ public class SettingsCheckerFragment extends Fragment
     private Context context;
 
     // TextViews
-    private TextView txtPincode, txtEncryption, txtDevMode,
-            txtWiFi, txtBluetooth, txtLocation, txtNFC;
+    private TextView txtPincode, txtEncryption, txtDevMode;
+
+    // Int Icon sources
+    private final int GREEN_TICK = R.drawable.tick;
+    private final int YELLOW_WARNING = R.drawable.warning_yellow;
+    private final int RED_WARNING = R.drawable.warning_red;
+
+    //ImageViews
+    private ImageView imgPin, imgEncrypState, imgDevMode, imgWifi,
+        imgMobileData, imgBluetooth, imgNFC, imgLocation;
 
     // Toggle Switches
     private Switch switchWiFi, switchMobileData, switchBluetooth,
-            switchNFC, switchLocation, switchDevMode;
+            switchNFC, switchLocation;
 
     // Manager for Connections
     private WifiManager wifiManager;
@@ -78,21 +86,28 @@ public class SettingsCheckerFragment extends Fragment
         View view = inflater.inflate(R.layout.fragment_settings_checker, container, false);
         context = view.getContext();
 
-        // Button
-        btnCheck = (Button) view.findViewById(R.id.btn_check_settings);
-        btnCheck.setOnClickListener(this);
+        // Buttons
+        btnGoToSettings = (Button) view.findViewById(R.id.btn_check_securitysettings);
+        btnGoToSettings.setOnClickListener(this);
+        btnGoToConnections = (Button) view.findViewById(R.id.btn_settings);
+        btnGoToConnections.setOnClickListener(this);
 
         // TextFields assigned to View
         txtPincode = view.findViewById(R.id.txt_pincode);
         txtEncryption = view.findViewById(R.id.txt_encryption);
-        txtWiFi = view.findViewById(R.id.txt_wifi);
-        txtBluetooth = view.findViewById(R.id.txt_bluetooth);
-        txtLocation = view.findViewById(R.id.txt_location);
-        txtNFC = view.findViewById(R.id.txt_nfc);
+        txtDevMode = view.findViewById(R.id.txt_dev_mode);
+
+        // ImageViews
+        imgPin = view.findViewById(R.id.img_pin);
+        imgEncrypState = view.findViewById(R.id.img_encryption);
+        imgDevMode = view.findViewById(R.id.img_dev_mode);
+        imgWifi = view.findViewById(R.id.img_wifi);
+        imgMobileData = view.findViewById(R.id.img_mobile_data);
+        imgBluetooth = view.findViewById(R.id.img_bluetooth);
+        imgNFC = view.findViewById(R.id.img_nfc);
+        imgLocation = view.findViewById(R.id.img_location);
 
         // Switches assigned to View
-        switchDevMode = view.findViewById(R.id.switch_devmode);
-        switchDevMode.setEnabled(false);
         switchWiFi = view.findViewById(R.id.switch_wifi);
         switchWiFi.setEnabled(false);
         switchMobileData = view.findViewById(R.id.switch_mobiledata);
@@ -123,31 +138,68 @@ public class SettingsCheckerFragment extends Fragment
         return view;
     }
 
-
-    // TODO Show up some infos or redirect user to settings
     // Button: onClick handler
     @Override
     public void onClick(View view) {
-        Toast.makeText(context,"ENCRYPTION: " + getDeviceEncryptionStatus(context), Toast.LENGTH_SHORT).show();
+        Intent intent;
+        switch (view.getId()){
+            case R.id.btn_check_securitysettings:
+                intent = new Intent(Settings.ACTION_SECURITY_SETTINGS);
+                startActivity(intent);
+                break;
+            case R.id.btn_settings:
+                intent = new Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS);
+                startActivity(intent);
+                break;
+        }
+        //Toast.makeText(context,"REDIRECT ME, PLEASE!", Toast.LENGTH_SHORT).show();
     }
 
     // Check all settings
     private void checkSettings(){
         checkPincode();
         checkDeveloperMode();
-
-        if (getDeviceEncryptionStatus(context) < 2 ){
-            txtEncryption.setText("NOT ENCRYPTED");
-        } else{
-            txtEncryption.setText("ENCRYPTED");
-        }
+        checkDeviceEncryptionStatus(context);
     }
 
     // Check if user has set a pincode
     private void checkPincode(){
         // true if a PIN, pattern or password is set or a SIM card is locked.
-        String secureString = keyguardManager.isKeyguardSecure() ? "Set" : "Not set";
+        String secureString = "";
+        if(keyguardManager.isKeyguardSecure()){
+            secureString = "SET";
+            imgPin.setImageResource(GREEN_TICK);
+        }else{
+            secureString = "NOT SET";
+            imgPin.setImageResource(RED_WARNING);
+        }
         txtPincode.setText(secureString);
+    }
+
+    // Get Encryption status
+    // 0: ECRYPTION_STATUS_UNSUPPORTED, 1: ENCRYPTION_STATUS_INACTIVE
+    // 2: ENCRYPTION_STATUS_ACTIVATING, 3: ENCRYPTION_STATUS_ACTIVE
+    // 4: ENCRYPTION_STATUS_ACTIVE_DEFAULT_KEY, 5: ENCRYPTION_STATUS_ACTIVE_PER_USER
+    @TargetApi(11)
+    private void checkDeviceEncryptionStatus(Context context)
+    {
+        int status = DevicePolicyManager.ENCRYPTION_STATUS_UNSUPPORTED;
+
+        if (Build.VERSION.SDK_INT >= 11) {
+            final DevicePolicyManager dpm =
+                    (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
+            if (dpm != null) {
+                status = dpm.getStorageEncryptionStatus();
+            }
+        }
+
+        if (status < 2 ){
+            txtEncryption.setText("NOT ENCRYPTED");
+            imgEncrypState.setImageResource(RED_WARNING);
+        } else{
+            txtEncryption.setText("ENCRYPTED");
+            imgEncrypState.setImageResource(GREEN_TICK);
+        }
     }
 
     // Check if device is in developer mode
@@ -159,34 +211,13 @@ public class SettingsCheckerFragment extends Fragment
         String devModeString;
 
         if(devMode == 0){
-            switchDevMode.setChecked(false);
-            switchDevMode.setText("Off");
+            txtDevMode.setText("OFF");
+            imgDevMode.setImageResource(GREEN_TICK);
         } else {
-            switchDevMode.setChecked(true);
-            switchDevMode.setText("On");
+            txtDevMode.setText("ON");
+            imgDevMode.setImageResource(RED_WARNING);
         }
     }
-
-    // Get Encryption status
-    // 0: ECRYPTION_STATUS_UNSUPPORTED, 1: ENCRYPTION_STATUS_INACTIVE
-    // 2: ENCRYPTION_STATUS_ACTIVATING, 3: ENCRYPTION_STATUS_ACTIVE
-    // 4: ENCRYPTION_STATUS_ACTIVE_DEFAULT_KEY, 5: ENCRYPTION_STATUS_ACTIVE_PER_USER
-    @TargetApi(11)
-    private static int getDeviceEncryptionStatus(Context context)
-    {
-        int status = DevicePolicyManager.ENCRYPTION_STATUS_UNSUPPORTED;
-
-        if (Build.VERSION.SDK_INT >= 11) {
-            final DevicePolicyManager dpm =
-                    (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
-            if (dpm != null) {
-                status = dpm.getStorageEncryptionStatus();
-            }
-        }
-        return status;
-    }
-
-
 
     // BROADCAST RECEIVERS
     // Register Broadcast Receivers for Connection-Changes
@@ -217,11 +248,13 @@ public class SettingsCheckerFragment extends Fragment
             switch (wifiStateExtra){
                 case WifiManager.WIFI_STATE_ENABLED:
                     switchWiFi.setChecked(true);
-                    switchWiFi.setText("On");
+                    switchWiFi.setText("ON");
+                    imgWifi.setImageResource(YELLOW_WARNING);
                     break;
                 case WifiManager.WIFI_STATE_DISABLED:
                     switchWiFi.setChecked(false);
-                    switchWiFi.setText("Off");
+                    switchWiFi.setText("OFF");
+                    imgWifi.setImageResource(0);
                     break;
             }
         }
@@ -244,10 +277,12 @@ public class SettingsCheckerFragment extends Fragment
 
             if(mobileDataAllowed){
                 switchMobileData.setChecked(true);
-                switchMobileData.setText("On");
+                switchMobileData.setText("ON");
+                imgMobileData.setImageResource(YELLOW_WARNING);
             } else{
                 switchMobileData.setChecked(false);
-                switchMobileData.setText("Off");
+                switchMobileData.setText("OFF");
+                imgMobileData.setImageResource(0);
             }
         }
     };
@@ -285,10 +320,12 @@ public class SettingsCheckerFragment extends Fragment
 
         if(nfcAdapter.isEnabled() == true){
             switchNFC.setChecked(true);
-            switchNFC.setText("On");
+            switchNFC.setText("ON");
+            imgNFC.setImageResource(YELLOW_WARNING);
         } else{
             switchNFC.setChecked(false);
-            switchNFC.setText("Off");
+            switchNFC.setText("OFF");
+            imgNFC.setImageResource(0);
         }
     }
 
@@ -298,10 +335,12 @@ public class SettingsCheckerFragment extends Fragment
 
         if(bluetoothAdapter.isEnabled()){
             switchBluetooth.setChecked(true);
-            switchBluetooth.setText("On");
+            switchBluetooth.setText("ON");
+            imgBluetooth.setImageResource(YELLOW_WARNING);
         } else{
             switchBluetooth.setChecked(false);
-            switchBluetooth.setText("Off");
+            switchBluetooth.setText("OFF");
+            imgBluetooth.setImageResource(0);
         }
     }
 
@@ -311,13 +350,14 @@ public class SettingsCheckerFragment extends Fragment
 
         if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) == true){
             switchLocation.setChecked(true);
-            switchLocation.setText("On");
+            switchLocation.setText("ON");
+            imgLocation.setImageResource(YELLOW_WARNING);
         } else{
             switchLocation.setChecked(false);
-            switchLocation.setText("Off");
+            switchLocation.setText("OFF");
+            imgLocation.setImageResource(0);
         }
     }
-
 
     /*
     // handling toggle Switch for WIFI

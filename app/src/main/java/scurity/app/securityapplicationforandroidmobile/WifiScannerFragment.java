@@ -3,6 +3,7 @@ package scurity.app.securityapplicationforandroidmobile;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,8 +13,10 @@ import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.location.LocationManager;
+import android.net.DhcpInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,7 +25,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
+import android.text.Html;
 import android.text.Layout;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -30,6 +38,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
@@ -37,6 +46,7 @@ import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import org.w3c.dom.Text;
@@ -59,6 +69,7 @@ public class WifiScannerFragment extends Fragment {
     int securityPointId;
     TextView wifiSecRate;
     View view = null;
+    boolean isScanned = false;
 
     public WifiScannerFragment() {
         // Required empty public constructor
@@ -70,8 +81,30 @@ public class WifiScannerFragment extends Fragment {
         // Inflate the layout for this fragment
         if(view == null){
             view = inflater.inflate(R.layout.fragment_wifi_scanner, container, false);
+        }else{
+            scanBtnCheck();
         }
         return view;
+    }
+
+    private void scanBtnCheck(){
+        if(isScanned){
+            try{
+                wifiBtn.setVisibility(View.VISIBLE);
+                loadingBar.setVisibility(View.GONE);
+            }catch(NullPointerException e){
+                Toast.makeText(context, e.toString(), Toast.LENGTH_LONG).show();
+            }
+        }
+        else{
+            try{
+                wifiBtn.setVisibility(View.GONE);
+                loadingBar.setVisibility(View.VISIBLE);
+            }
+            catch(NullPointerException e){
+                Toast.makeText(context, e.toString(), Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     @Override
@@ -112,18 +145,15 @@ public class WifiScannerFragment extends Fragment {
                 getFragmentManager().executePendingTransactions();
             }
         }
-        else{
-        }
-
     }
 
     void wifiBtnClicked(Context context){
         if(Build.VERSION.SDK_INT >= 23){
             statusCheck();
         }else{
+            isScanned = false;
             wifiBuilder(context);
         }
-
     }
 
     public void wifiBuilder(Context context){
@@ -141,7 +171,6 @@ public class WifiScannerFragment extends Fragment {
             loadingBar.setVisibility(View.VISIBLE);
 
             ((MainActivity) getActivity()).setWifiScanned(true);
-//            setProgressDialogState(true);
 
             TableRow firstRow = new TableRow(context);
             firstRow.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -150,11 +179,16 @@ public class WifiScannerFragment extends Fragment {
             headParams.setMargins(10,10,10,0);
             firstRow.setLayoutParams(headParams);
 
-            TextView headName = makeTableText(tableFontSzie, "WIFI", true, false, columnWidth);
-            TextView headFrq = makeTableText(tableFontSzie, "Channel", true, false, columnWidth);
-            TextView headSecPoint = makeTableText(tableFontSzie, "Rate", true, false, columnWidth);
-            TextView headSignal = makeTableText(tableFontSzie, "Strength", true, false, columnWidth);
-            TextView headLink = makeTableText(tableFontSzie, "Detail", true, true, columnWidth);
+            TextView headName = makeTableText(tableFontSzie, "WiFi\n(SSID)", true, false, columnWidth);
+            headName.setGravity(Gravity.CENTER);
+            TextView headFrq = makeTableText(tableFontSzie, "Frequency\n(Channel)", true, false, columnWidth);
+            headFrq.setGravity(Gravity.CENTER);
+            TextView headSecPoint = makeTableText(tableFontSzie, "Security\nLevel", true, false, columnWidth);
+            headSecPoint.setGravity(Gravity.CENTER);
+            TextView headSignal = makeTableText(tableFontSzie, "Strength\n(Signal)", true, false, columnWidth);
+            headSignal.setGravity(Gravity.CENTER);
+            TextView headLink = makeTableText(tableFontSzie, "Check\nDetail", true, true, columnWidth);
+            headLink.setGravity(Gravity.CENTER);
 
             firstRow.addView(headName);
             firstRow.addView(headFrq);
@@ -178,10 +212,13 @@ public class WifiScannerFragment extends Fragment {
             wifiSsid.setTextColor(connectedWifiColor);
 
             TextView wifiFreq = makeTableText(tableFontSzie, wifiInfo.getWifiManager().getConnectionInfo().getHiddenSSID()? "YES":"NO"
+
                     /**Uncomment this when production mode or in the environment API level higher than 21 which is able to use following api
                      * wifiInfo.getConnectionInfo().getFrequency()**/
+
                     , false, false, columnWidth );
             wifiFreq.setTextColor(connectedWifiColor);
+            wifiFreq.setGravity(Gravity.CENTER);
 
             this.wifiSecRate = makeTableText(tableFontSzie, "Rating..", false, false, columnWidth );
             this.wifiSecRate.setTextColor(connectedWifiColor);
@@ -189,6 +226,7 @@ public class WifiScannerFragment extends Fragment {
 
             TextView wifiRssi = makeTableText(tableFontSzie, wifiInfo.getRssi(), false, false, columnWidth );
             wifiRssi.setTextColor(connectedWifiColor);
+            wifiRssi.setGravity(Gravity.CENTER);
 
             Button detailBtn = new Button(context);
             detailBtn.setText("Detail");
@@ -232,7 +270,7 @@ public class WifiScannerFragment extends Fragment {
             context.registerReceiver(wifiExtra, intentFilter);
         }
         else{
-            failMsg("Currently WIFI is not connected or unable!");
+            failMsg("Currently WIFI is not connected or disabled!");
         }
     }
 
@@ -294,7 +332,11 @@ public class WifiScannerFragment extends Fragment {
         Iterator hashMapIndex = scanResultHashMap.keySet().iterator();
 
         if(scanResultHashMap != null){
-            this.wifiSecRate.setText(""+wifiInfo.getSecurityPoint(wifiInfo.getConnectedWifiscanResult()));
+            int connectedWifiSecurityP = wifiInfo.getSecurityPoint(wifiInfo.getConnectedWifiscanResult());
+            wifiSecRate.setText(securityPasTextGreen(connectedWifiSecurityP), TextView.BufferType.SPANNABLE);
+            wifiSecRate.setGravity(Gravity.CENTER);
+            makeClickable(connectedWifiSecurityP, wifiSecRate);
+
 
             while(hashMapIndex.hasNext()){
                 String key = (String) hashMapIndex.next();
@@ -302,9 +344,18 @@ public class WifiScannerFragment extends Fragment {
                 int securityPoint = wifiInfo.getSecurityPoint(scanResultHashMap.get(key));
 
                 TextView textView1 = makeTableText(tableFontSize, scanResultHashMap.get(key).SSID, false, false, columnWidth);
+
                 TextView textView2 = makeTableText(tableFontSize, ""+scanResultHashMap.get(key).frequency, false, false, columnWidth);
-                TextView textView3 = makeTableText(tableFontSize, ""+securityPoint, false, false, columnWidth);
+                textView2.setGravity(Gravity.CENTER);
+
+                TextView textView3 = makeTableText(tableFontSize, "", false, false, columnWidth);
+
+                textView3.setText(securityPasTextBlack(securityPoint, rowBackgoundColorIndex), TextView.BufferType.SPANNABLE);
+                makeClickable(securityPoint, textView3);
+
                 TextView textView4 = makeTableText(tableFontSize, ""+scanResultHashMap.get(key).level, false, false, columnWidth);
+                textView4.setGravity(Gravity.CENTER);
+
                 Button detailBtn = makeDetailBtn(tableFontSize, scanResultHashMap.get(key));
 
                 if(rowBackgoundColorIndex%2 ==1){
@@ -324,18 +375,89 @@ public class WifiScannerFragment extends Fragment {
         }
         loadingBar.setVisibility(View.GONE);
         wifiBtn.setVisibility(View.VISIBLE);
+        isScanned = true;
     }
 
-    private void rateSecurity(int securityPoint){
+    private SpannableStringBuilder securityPasTextBlack(int securityP, int rowBackgoundColorIndex){
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
 
-        RatingBar ratingBar = new RatingBar(context, null, R.attr.ratingBarStyleSmall);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        ratingBar.setLayoutParams(params);
+        String blackStar = "\u2605";
+        /**
+         * This is uni code for Star shape special character
+         * */
+        String result = "";
 
-        ratingBar.setNumStars(5);
-        ratingBar.setRating(securityPoint);
-        ratingBar.setIsIndicator(true);
-//        ratingBar.setBackgroundColor(Color.BLUE);
+        for(int i = 0; i<5; i++){
+            result += blackStar;
+        }
+        if(rowBackgoundColorIndex%2 ==1){
+            SpannableString grayStar = new SpannableString(result);
+            grayStar.setSpan(new ForegroundColorSpan(Color.WHITE),0,5,0);
+            grayStar.setSpan(new ForegroundColorSpan(Color.BLACK),0,securityP/2,0);
+            spannableStringBuilder.append(grayStar);
+        }
+        else{
+            SpannableString grayStar = new SpannableString(result);
+            grayStar.setSpan(new ForegroundColorSpan(Color.LTGRAY),0,5,0);
+            grayStar.setSpan(new ForegroundColorSpan(Color.BLACK),0,securityP/2,0);
+            spannableStringBuilder.append(grayStar);
+        }
+        return spannableStringBuilder;
+    }
+
+    private SpannableStringBuilder securityPasTextGreen(int securityP){
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+
+        String blackStar = "\u2605";
+
+        String result = "";
+
+        for(int i = 0; i<5; i++){
+            result += blackStar;
+        }
+        SpannableString grayStar = new SpannableString(result);
+        grayStar.setSpan(new ForegroundColorSpan(Color.LTGRAY),0,5,0);
+        grayStar.setSpan(new ForegroundColorSpan(Color.GREEN),0,securityP/2,0);
+        spannableStringBuilder.append(grayStar);
+
+        return spannableStringBuilder;
+    }
+
+    private String getAllConnectedWifiInfo(){
+        String info = "";
+        info += trimmedConnectionInfo(wifiInfo.getConnectionInfo());
+        info += trimmedDhcpInfo(wifiInfo.getDhcpInfo()) ;
+        info += "\n- Configuration Info - \n" + wifiInfo.GetCurrentWifiConfiguration() ;
+        return info;
+    }
+
+    private String trimmedConnectionInfo(WifiInfo wifiInfo){
+        String info = "\n- Connection Information - ";
+        info += "\nSSID:" + wifiInfo.getSSID();
+        info += "\nMac address:" + wifiInfo.getMacAddress() ;
+        info += "\nRSSI: " + wifiInfo.getRssi() ;
+        info += "\nBSSID: " + wifiInfo.getBSSID();
+        info += "\nSupplicant state: " + wifiInfo.getSupplicantState();
+        info += "\nLink Speed: " + wifiInfo.getLinkSpeed();
+        info += "\nNet ID: " + wifiInfo.getNetworkId();
+        info += "\nHidden: " + wifiInfo.getHiddenSSID();
+        info += "\nIP Address: " + wifiInfo.getIpAddress();
+        info += "\nDescription: " + wifiInfo.describeContents();
+
+        return info;
+    }
+
+    private String trimmedDhcpInfo(DhcpInfo dhcpInfo){
+        String dhcp = "\n- DHCP Information - ";
+        dhcp += "\nIP Address: " + dhcpInfo.ipAddress;
+        dhcp += "\nGateway: " + dhcpInfo.gateway;
+        dhcp += "\nNetmask: " + dhcpInfo.netmask;
+        dhcp += "\nDNS1: " + dhcpInfo.dns1;
+        dhcp += "\nDNS2: " + dhcpInfo.dns2;
+        dhcp += "\nServer Address: " + dhcpInfo.serverAddress;
+        dhcp += "\nLease duration: " + dhcpInfo.leaseDuration;
+
+        return dhcp;
     }
 
     public void showSimpleDialog(ScanResult detailInfo) {
@@ -348,7 +470,7 @@ public class WifiScannerFragment extends Fragment {
         message += "\n\nFrequency: " + detailInfo.frequency;
         message += "\n\nLevel: " + detailInfo.level;
         message += "\n\nCapabilities: " + detailInfo.capabilities;
-        message += "\n\n\n\nExtra for checking: \n" + detailInfo;
+        message += "\nExtra: \n" + detailInfo;
 
         new AlertDialog.Builder(context)
                 .setTitle(title)
@@ -367,6 +489,24 @@ public class WifiScannerFragment extends Fragment {
                 .setMessage(""+message)
                 .setPositiveButton("OK", null)
                 .show();
+    }
+
+    private void makeClickable(final int securityP, TextView textView){
+
+        textView.setOnClickListener(new ModifiedOnClickListener(securityP){
+            @Override
+            public void onClick(View v) {
+
+                Dialog rankDialog = new Dialog(context, R.style.FullHeightDialog);
+                rankDialog.setContentView(R.layout.rating_bar_dialog);
+                rankDialog.setCancelable(true);
+                RatingBar ratingBar = rankDialog.findViewById(R.id.dialog_ratingbar);
+                ratingBar.setIsIndicator(true);
+                ratingBar.setStepSize(Float.parseFloat("0.5"));
+                ratingBar.setRating(securityP/2);
+                rankDialog.show();
+            }
+        });
     }
 
     private Button makeDetailBtn(int tableFontSize, final ScanResult scanResult){
@@ -389,19 +529,6 @@ public class WifiScannerFragment extends Fragment {
         });
 
         return detailBtn;
-    }
-
-    private String getAllConnectedWifiInfo(){
-        String info = "";
-        info += "SSID:" + wifiInfo.getSsid() ;
-        info += "\n\nMac address:" + wifiInfo.getMacAddress() ;
-        info += "\n\nRSSI: " + wifiInfo.getRssi() ;
-        info += "\n\nConnection Info: " + wifiInfo.getConnectionInfo() ;
-        info += "\n\nDHCP Info: " + wifiInfo.getDhcpInfo() ;
-        info += "\n\nConfiguration Info: " + wifiInfo.GetCurrentWifiConfiguration() ;
-        info += "\n\nDhcpInfo from manager: " + wifiInfo.getWifiManager().getDhcpInfo() ;
-        info += "\n\nState from manager: " + wifiInfo.getWifiManager().getWifiState() ;
-        return info;
     }
 
     public void statusCheck() {
