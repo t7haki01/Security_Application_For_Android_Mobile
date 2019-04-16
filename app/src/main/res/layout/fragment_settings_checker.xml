@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SettingsCheckerFragment">
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
 
     <TextView
         android:id="@+id/lbl_settings_title"
@@ -41,6 +48,7 @@
 
             <TextView
                 android:padding="5dp"
+                android:layout_width="110dp"
                 android:text="PIN-Code / Pattern"
                 android:textSize="16sp" />
 
@@ -49,7 +57,7 @@
                 android:layout_gravity="center"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:src="@drawable/tick" />
+                />
 
             <TextView
                 android:id="@+id/txt_pincode"
@@ -73,7 +81,7 @@
                 android:layout_gravity="center"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:src="@drawable/tick" />
+              />
 
             <TextView
                 android:id="@+id/txt_encryption"
@@ -104,8 +112,7 @@
                 android:id="@+id/img_dev_mode"
                 android:layout_gravity="center"
                 android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/warning_red" />
+                android:layout_height="20dp" />
 
             <TextView
                 android:id="@+id/txt_dev_mode"
@@ -118,7 +125,7 @@
     </TableLayout>
 
     <Button
-        android:id="@+id/btn_check_settings"
+        android:id="@+id/btn_check_securitysettings"
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:layout_marginStart="16dp"
@@ -140,7 +147,7 @@
         android:layout_width="0dp"
         android:layout_height="27dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
         android:fontFamily="sans-serif-black"
         android:paddingLeft="3dp"
@@ -149,7 +156,7 @@
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_check_settings" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_check_securitysettings" />
 
     <TableLayout
         android:id="@+id/tbl_connections"
@@ -170,6 +177,7 @@
 
             <TextView
                 android:padding="5dp"
+                android:layout_width="110dp"
                 android:text="WiFi"
                 android:textSize="16sp" />
 
@@ -177,15 +185,14 @@
                 android:id="@+id/img_wifi"
                 android:layout_gravity="center"
                 android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/warning_yellow" />
+                android:layout_height="20dp" />
 
             <Switch
                 android:id="@+id/switch_wifi"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:switchMinWidth="80dp" />
+                android:switchMinWidth="60dp" />
         </TableRow>
 
         <TableRow
@@ -201,14 +208,13 @@
                 android:id="@+id/img_mobile_data"
                 android:layout_gravity="center"
                 android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/warning_yellow" />
+                android:layout_height="20dp" />
             <Switch
                 android:id="@+id/switch_mobiledata"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:switchMinWidth="80dp" />
+                android:switchMinWidth="60dp" />
         </TableRow>
 
         <TableRow
@@ -224,15 +230,14 @@
                 android:id="@+id/img_bluetooth"
                 android:layout_gravity="center"
                 android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/warning_yellow" />
+                android:layout_height="20dp" />
 
             <Switch
                 android:id="@+id/switch_bluetooth"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:switchMinWidth="80dp" />
+                android:switchMinWidth="60dp" />
 
         </TableRow>
 
@@ -249,15 +254,14 @@
                 android:id="@+id/img_nfc"
                 android:layout_gravity="center"
                 android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/warning_yellow" />
+                android:layout_height="20dp" />
 
             <Switch
                 android:id="@+id/switch_nfc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:switchMinWidth="80dp" />
+                android:switchMinWidth="60dp" />
 
         </TableRow>
 
@@ -274,28 +278,27 @@
                 android:id="@+id/img_location"
                 android:layout_gravity="center"
                 android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/warning_yellow" />
+                android:layout_height="20dp" />
 
             <Switch
                 android:id="@+id/switch_location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:switchMinWidth="80dp" />
+                android:switchMinWidth="60dp" />
 
         </TableRow>
     </TableLayout>
 
     <Button
-        android:id="@+id/btn_connection"
+        android:id="@+id/btn_settings"
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/button_background"
-        android:text="GO TO CONNECTIONS"
+        android:text="SWITCH TO AIRPLANE MODE"
         android:textAlignment="center"
         android:textColor="@android:color/white"
         android:textSize="16sp"
@@ -304,3 +307,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tbl_connections" />
 </android.support.constraint.ConstraintLayout>
+</ScrollView>
