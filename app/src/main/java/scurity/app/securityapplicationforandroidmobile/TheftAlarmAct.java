@@ -38,7 +38,7 @@ public class TheftAlarmAct {
          * kihun 3.4.2019
          * */
         //This is for the stoppable way of implementing
-        warningAlarm.play(context, R.raw.merged);
+        warningAlarm.play(context, R.raw.ring);
 
         /**This is kinda unstoppable unless alarm state is changed and receiever check again since mediaplayer already released so can not get the stop context*/
 //        if( alarm == null){
