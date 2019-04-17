@@ -7,7 +7,7 @@
     android:id="@+id/frame_wifiScanner"
     tools:context=".WifiScannerFragment"
     android:layout_marginRight="5dp"
-    app:layout_goneMarginBottom="10dp"
+    android:layout_marginBottom="10dp"
     android:layout_marginLeft="5dp"
     android:layout_marginTop="5dp">
 
