@@ -185,10 +185,9 @@ public class WifiScannerFragment extends Fragment {
             headSecPoint.setGravity(Gravity.CENTER);
             TextView headSignal = makeTableText(tableFontSzie, "Strength\n(Signal)", true, false, columnWidth);
             headSignal.setGravity(Gravity.CENTER);
-            TextView headLink = makeTableText(tableFontSzie, "", true, true, columnWidth, true);
-            headLink.setText(R.string.detail_char);
-            headLink.append("\n ");
-            headLink.setGravity(Gravity.CENTER);
+            TextView headLink = makeTableText(tableFontSzie, "\u2630 \n", true, true, columnWidth, true);
+            headLink.setGravity(Gravity.CENTER_VERTICAL);
+            headLink.setGravity(Gravity.CENTER_HORIZONTAL);
 
             firstRow.addView(headName);
             firstRow.addView(headFrq);
@@ -317,7 +316,7 @@ public class WifiScannerFragment extends Fragment {
     public TextView makeTableText(int fontSize, String text, boolean isHead, boolean isEnd, int width, boolean isDetail){
         TextView textView = new TextView(context);
         textView.setTextSize(fontSize);
-        textView.setText(R.string.detail_char);
+        textView.setText(text);
         TableRow.LayoutParams params  = new TableRow.LayoutParams(width, ViewGroup.LayoutParams.WRAP_CONTENT);
         if(isDetail){
             params.weight=Float.parseFloat("0.1");

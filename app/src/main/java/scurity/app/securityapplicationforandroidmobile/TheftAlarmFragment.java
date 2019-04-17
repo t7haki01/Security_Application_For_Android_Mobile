@@ -54,6 +54,8 @@ public class TheftAlarmFragment extends Fragment {
 
     private View view = null;
 
+    TheftAlarmAct theftAlarmAct = null;
+
     public TheftAlarmFragment() {
         // Required empty public constructor
     }
@@ -74,14 +76,12 @@ public class TheftAlarmFragment extends Fragment {
         if(context == null) {
             alarm = new MediaPlayer();
             context = getContext();
-
-
-            new TheftAlarmAct(context).checkRegister();
-
             theftAlarmFragment = getView().findViewById(R.id.frame_theftAlarm);
             unregisteredLayout = getView().findViewById(R.id.unregistered_layout);
             registeredLayout = getView().findViewById(R.id.registered_layout);
             loadingLayout = getView().findViewById(R.id.loading_layout);
+
+            new TheftAlarmAct(loadingLayout, registeredLayout, unregisteredLayout, context).checkRegister();
 
             componentName = new ComponentName(this.context, AdminForLock.class);
             devicePolicyManager = (DevicePolicyManager) this.context.getSystemService(Context.DEVICE_POLICY_SERVICE);
@@ -93,28 +93,9 @@ public class TheftAlarmFragment extends Fragment {
                     linkToSite();
                 }
             });
-
-
-        }
-
-        boolean isRegistered = ((MainActivity) context).isRegistered();
-        boolean isLoadingDone = ((MainActivity) context).isLoadingDone();
-
-        new TheftAlarmAct(context).checkRegister();
-
-        if(isLoadingDone){
-            loadingLayout.setVisibility(View.GONE);
-            if(!isRegistered){
-                unregisteredLayout.setVisibility(View.VISIBLE);
-                registeredLayout.setVisibility(View.GONE);
-            }else{
-                unregisteredLayout.setVisibility(View.GONE);
-                registeredLayout.setVisibility(View.VISIBLE);
-            }
         }else{
-            loadingLayout.setVisibility(View.VISIBLE);
+            new TheftAlarmAct(loadingLayout, registeredLayout, unregisteredLayout, context).checkRegister();
         }
-
 
         if(!devicePolicyManager.isAdminActive(componentName)){
             makeAdminAble();
@@ -129,5 +110,24 @@ public class TheftAlarmFragment extends Fragment {
         Uri uri = Uri.parse("http://www.students.oamk.fi/~t7haki01/sysknife/demo/site/pricing");
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
+    }
+
+    public void setRegiState(boolean isRegistered, boolean isLoadingDone){
+        ConstraintLayout loadingLayout = getView().findViewById(R.id.loading_layout);
+        ConstraintLayout unregisteredLayout = getView().findViewById(R.id.unregistered_layout);
+        ConstraintLayout registeredLayout = getView().findViewById(R.id.registered_layout);
+        if(isLoadingDone){
+
+            loadingLayout.setVisibility(View.GONE);
+            if(!isRegistered){
+                unregisteredLayout.setVisibility(View.VISIBLE);
+                registeredLayout.setVisibility(View.GONE);
+            }else{
+                unregisteredLayout.setVisibility(View.GONE);
+                registeredLayout.setVisibility(View.VISIBLE);
+            }
+        }else{
+            loadingLayout.setVisibility(View.VISIBLE);
+        }
     }
 }
