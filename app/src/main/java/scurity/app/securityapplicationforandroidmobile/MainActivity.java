@@ -188,14 +188,14 @@ public class MainActivity extends AppCompatActivity
                 fragmentTransaction.replace(R.id.main_fragment, theftAlarmFrag);
                 fragmentTransaction.commit();
                 break;
-            /*
+
             case R.id.nav_batterystate:
                 setTitle("Battery State");
                 batteryStateFrag = new BatteryStateFragment();
                 fragmentManager.beginTransaction().replace(
                         R.id.main_fragment, batteryStateFrag).commit();
                 break;
-            */
+
             case R.id.nav_basicinfo:
                 setTitle("Basic Info");
                 basicInfoFrag = new BasicInfoFragment();
