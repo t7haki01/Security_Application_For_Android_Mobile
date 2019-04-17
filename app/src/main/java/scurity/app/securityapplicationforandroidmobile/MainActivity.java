@@ -50,6 +50,15 @@ public class MainActivity extends AppCompatActivity
     private AboutAppFragment aboutAppFrag;
     private boolean isWifiScanned = false;
     private boolean isRegistered = false;
+    private boolean isLoadingDone = false;
+
+    public boolean isLoadingDone() {
+        return isLoadingDone;
+    }
+
+    public void setLoadingDone(boolean loadingDone) {
+        isLoadingDone = loadingDone;
+    }
 
     public void setWifiScanned(boolean wifiScanned) {
         isWifiScanned = wifiScanned;

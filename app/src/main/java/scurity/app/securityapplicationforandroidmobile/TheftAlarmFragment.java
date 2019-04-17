@@ -50,6 +50,7 @@ public class TheftAlarmFragment extends Fragment {
     private Button linkBtn = null;
     private ConstraintLayout unregisteredLayout = null;
     private ConstraintLayout registeredLayout = null;
+    private ConstraintLayout loadingLayout = null;
 
     private View view = null;
 
@@ -69,35 +70,51 @@ public class TheftAlarmFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        if(context == null){
+
+        if(context == null) {
             alarm = new MediaPlayer();
+            context = getContext();
+
+
+            new TheftAlarmAct(context).checkRegister();
+
+            theftAlarmFragment = getView().findViewById(R.id.frame_theftAlarm);
+            unregisteredLayout = getView().findViewById(R.id.unregistered_layout);
+            registeredLayout = getView().findViewById(R.id.registered_layout);
+            loadingLayout = getView().findViewById(R.id.loading_layout);
+
+            componentName = new ComponentName(this.context, AdminForLock.class);
+            devicePolicyManager = (DevicePolicyManager) this.context.getSystemService(Context.DEVICE_POLICY_SERVICE);
+
+            linkBtn = getView().findViewById(R.id.signUp_btn);
+            linkBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    linkToSite();
+                }
+            });
+
+
         }
-        context = getContext();
-        new TheftAlarmAct(context).checkRegister();
-
-        theftAlarmFragment = getView().findViewById(R.id.frame_theftAlarm);
-        unregisteredLayout = getView().findViewById(R.id.unregistered_layout);
-        registeredLayout = getView().findViewById(R.id.registered_layout);
-        componentName = new ComponentName(this.context, AdminForLock.class);
-        devicePolicyManager = (DevicePolicyManager) this.context.getSystemService(Context.DEVICE_POLICY_SERVICE);
-
-        linkBtn = getView().findViewById(R.id.signUp_btn);
-        linkBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                linkToSite();
-            }
-        });
 
         boolean isRegistered = ((MainActivity) context).isRegistered();
+        boolean isLoadingDone = ((MainActivity) context).isLoadingDone();
 
-        if(!isRegistered){
-            unregisteredLayout.setVisibility(View.VISIBLE);
-            registeredLayout.setVisibility(View.GONE);
+        new TheftAlarmAct(context).checkRegister();
+
+        if(isLoadingDone){
+            loadingLayout.setVisibility(View.GONE);
+            if(!isRegistered){
+                unregisteredLayout.setVisibility(View.VISIBLE);
+                registeredLayout.setVisibility(View.GONE);
+            }else{
+                unregisteredLayout.setVisibility(View.GONE);
+                registeredLayout.setVisibility(View.VISIBLE);
+            }
         }else{
-            unregisteredLayout.setVisibility(View.GONE);
-            registeredLayout.setVisibility(View.VISIBLE);
+            loadingLayout.setVisibility(View.VISIBLE);
         }
+
 
         if(!devicePolicyManager.isAdminActive(componentName)){
             makeAdminAble();
