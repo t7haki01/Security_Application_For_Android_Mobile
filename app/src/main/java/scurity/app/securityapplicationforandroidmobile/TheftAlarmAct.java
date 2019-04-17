@@ -100,6 +100,7 @@ public class TheftAlarmAct {
 
     public void checkRegister(){
         String url = "http://www.students.oamk.fi/~t7haki01/sysknife/index.php/api/TheftAlarm/mobiles/id/123";
+        setIsLoadingDone(false);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
