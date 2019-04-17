@@ -5,11 +5,43 @@
     android:layout_height="match_parent"
     tools:context=".BatteryStateFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <RelativeLayout
+
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text='Implement "Battery State" here'
-        android:textSize="24sp" />
+
+        tools:context=".MainActivity">
+
+        <TextView
+            android:id="@+id/direction_txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Direction"
+            android:textAlignment="center"
+            android:textColor="#000"
+            android:textSize="40sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/img_compass"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/direction_txt"
+            android:src="@drawable/compass2" />
+
+        <TextView
+            android:id="@+id/derees"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/img_compass"
+            android:layout_centerHorizontal="true"
+            android:text="Degrees"
+            android:textAlignment="viewStart"
+            android:textColor="#000"
+            android:textSize="40sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
 
 </FrameLayout>
