@@ -50,6 +50,15 @@ public class MainActivity extends AppCompatActivity
     private AboutAppFragment aboutAppFrag;
     private boolean isWifiScanned = false;
     private boolean isRegistered = false;
+    private boolean isLoadingDone = false;
+
+    public boolean isLoadingDone() {
+        return isLoadingDone;
+    }
+
+    public void setLoadingDone(boolean loadingDone) {
+        isLoadingDone = loadingDone;
+    }
 
     public void setWifiScanned(boolean wifiScanned) {
         isWifiScanned = wifiScanned;
@@ -188,12 +197,14 @@ public class MainActivity extends AppCompatActivity
                 fragmentTransaction.replace(R.id.main_fragment, theftAlarmFrag);
                 fragmentTransaction.commit();
                 break;
+
             case R.id.nav_batterystate:
                 setTitle("Battery State");
                 batteryStateFrag = new BatteryStateFragment();
                 fragmentManager.beginTransaction().replace(
                         R.id.main_fragment, batteryStateFrag).commit();
                 break;
+
             case R.id.nav_basicinfo:
                 setTitle("Basic Info");
                 basicInfoFrag = new BasicInfoFragment();

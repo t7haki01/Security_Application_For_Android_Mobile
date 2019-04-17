@@ -100,6 +100,7 @@ public class TheftAlarmAct {
 
     public void checkRegister(){
         String url = "http://www.students.oamk.fi/~t7haki01/sysknife/index.php/api/TheftAlarm/mobiles/id/123";
+        setIsLoadingDone(false);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
@@ -120,6 +121,8 @@ public class TheftAlarmAct {
                             e.printStackTrace();
                         }
 
+                        setIsLoadingDone(true);
+
                         if(id == null){
                             setRegiState(false);
                         }
@@ -137,11 +140,19 @@ public class TheftAlarmAct {
         VolleyHttpSingletone.getInstance(context).addToRequestQueue(jsonArrayRequest);
     }
 
-    void setRegiState(Boolean isRegistered){
+    void setRegiState(boolean isRegistered){
         if(isRegistered){
             ((MainActivity) context).setRegistered(true);
         }else{
             ((MainActivity) context).setRegistered(false);
+        }
+    }
+
+    void setIsLoadingDone(boolean isLoadingDone){
+        if(isLoadingDone){
+            ((MainActivity) context).setLoadingDone(true);
+        }else{
+            ((MainActivity) context).setLoadingDone(false);
         }
     }
 
