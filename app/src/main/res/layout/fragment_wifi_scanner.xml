@@ -29,7 +29,7 @@
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:indeterminate="true"
-            android:layout_marginTop="44dp"
+            android:layout_marginTop="60dp"
             android:id="@+id/loading_bar"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -55,7 +55,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/wifi_btn"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="5dp"
                     android:gravity="center_horizontal">
                 </TableLayout>
     </android.support.constraint.ConstraintLayout>

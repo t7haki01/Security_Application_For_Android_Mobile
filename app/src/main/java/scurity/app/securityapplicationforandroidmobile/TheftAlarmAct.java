@@ -8,7 +8,9 @@ import android.media.AudioManager;
 import android.media.Image;
 import android.media.MediaPlayer;
 import android.os.PowerManager;
+import android.support.constraint.ConstraintLayout;
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -28,6 +30,9 @@ public class TheftAlarmAct {
     private DevicePolicyManager devicePolicyManager;
     private Context context;
     private WarningAlarm warningAlarm;
+    ConstraintLayout loadingLayout = null;
+    ConstraintLayout registeredLayout = null;
+    ConstraintLayout unregisteredLayout = null;
 
     public TheftAlarmAct(Context context){
         this.context = context;
@@ -35,6 +40,14 @@ public class TheftAlarmAct {
         this.componentName = new ComponentName(this.context, AdminForLock.class);
         this.devicePolicyManager = (DevicePolicyManager) this.context.getSystemService(Context.DEVICE_POLICY_SERVICE);
         warningAlarm = new WarningAlarm();
+    }
+
+    public TheftAlarmAct(ConstraintLayout loadingLayout, ConstraintLayout registeredLayout, ConstraintLayout unregisteredLayout,
+                         Context context){
+        this.registeredLayout = registeredLayout;
+        this.loadingLayout = loadingLayout;
+        this.unregisteredLayout = unregisteredLayout;
+        this.context = context;
     }
 
     public void ringTheBell(){
@@ -100,7 +113,7 @@ public class TheftAlarmAct {
 
     public void checkRegister(){
         String url = "http://www.students.oamk.fi/~t7haki01/sysknife/index.php/api/TheftAlarm/mobiles/id/123";
-        setIsLoadingDone(false);
+        setVisual(false, false);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
@@ -108,6 +121,7 @@ public class TheftAlarmAct {
                     @Override
                     public void onResponse(JSONArray response) {
                         String id = null;
+                        setVisual(true, true);
                         try{
                             Log.d("Response: ", response.getJSONObject(0).getString("id"));
                             Log.d("Response: ", ""+response.getJSONObject(0).get("id"));
@@ -120,40 +134,30 @@ public class TheftAlarmAct {
                         }catch(JSONException e){
                             e.printStackTrace();
                         }
-
-                        setIsLoadingDone(true);
-
-                        if(id == null){
-                            setRegiState(false);
-                        }
-                        else{
-                            setRegiState(true);
-                        }
                     }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // TODO: Handle error
+                        setVisual(true, false);
                         error.getLocalizedMessage();
                     }
                 });
         VolleyHttpSingletone.getInstance(context).addToRequestQueue(jsonArrayRequest);
     }
 
-    void setRegiState(boolean isRegistered){
-        if(isRegistered){
-            ((MainActivity) context).setRegistered(true);
-        }else{
-            ((MainActivity) context).setRegistered(false);
-        }
-    }
-
-    void setIsLoadingDone(boolean isLoadingDone){
+    private void setVisual(boolean isLoadingDone, boolean isRegistered){
         if(isLoadingDone){
-            ((MainActivity) context).setLoadingDone(true);
+            loadingLayout.setVisibility(View.GONE);
+            if(isRegistered){
+                registeredLayout.setVisibility(View.VISIBLE);
+                unregisteredLayout.setVisibility(View.GONE);
+            }else{
+                registeredLayout.setVisibility(View.GONE);
+                unregisteredLayout.setVisibility(View.VISIBLE);
+            }
         }else{
-            ((MainActivity) context).setLoadingDone(false);
+            loadingLayout.setVisibility(View.VISIBLE);
         }
     }
-
 }

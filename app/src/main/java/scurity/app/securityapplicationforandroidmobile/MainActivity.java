@@ -49,27 +49,11 @@ public class MainActivity extends AppCompatActivity
     private EmergencyFragment emergencyFragment;
     private AboutAppFragment aboutAppFrag;
     private boolean isWifiScanned = false;
-    private boolean isRegistered = false;
-    private boolean isLoadingDone = false;
-
-    public boolean isLoadingDone() {
-        return isLoadingDone;
-    }
-
-    public void setLoadingDone(boolean loadingDone) {
-        isLoadingDone = loadingDone;
-    }
+    public boolean isRegistered = false;
+    public boolean isLoadingDone = false;
 
     public void setWifiScanned(boolean wifiScanned) {
         isWifiScanned = wifiScanned;
-    }
-
-    public void setRegistered(boolean registered) {
-        isRegistered = registered;
-    }
-
-    public boolean isRegistered() {
-        return isRegistered;
     }
 
     @Override
@@ -91,8 +75,6 @@ public class MainActivity extends AppCompatActivity
             * **/
             permissionHandler();
         }
-
-        new TheftAlarmAct(this).checkRegister();
 
         fragmentManager.beginTransaction().replace(
                 R.id.main_fragment, wifiScanFrag).commit();
