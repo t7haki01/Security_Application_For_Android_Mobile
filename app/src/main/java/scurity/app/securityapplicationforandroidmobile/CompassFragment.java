@@ -1,14 +1,12 @@
 package scurity.app.securityapplicationforandroidmobile;
 
 
-import android.content.DialogInterface;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +19,7 @@ import static android.content.Context.SENSOR_SERVICE;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class BatteryStateFragment extends Fragment implements SensorEventListener {
+public class CompassFragment extends Fragment implements SensorEventListener {
 
     ImageView compass_img;
     TextView txt_compass;
@@ -42,7 +40,7 @@ public class BatteryStateFragment extends Fragment implements SensorEventListene
     private boolean mLastAccelerometerSet = false;
     //From magnetometer
     private boolean mLastMagnetometerSet = false;
-    public BatteryStateFragment() {
+    public CompassFragment() {
         // Required empty public constructor
     }
 
@@ -51,7 +49,7 @@ public class BatteryStateFragment extends Fragment implements SensorEventListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_battery_state, container, false);
+        View view = inflater.inflate(R.layout.fragment_compass, container, false);
 
         mSensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
         //Hooking the image
