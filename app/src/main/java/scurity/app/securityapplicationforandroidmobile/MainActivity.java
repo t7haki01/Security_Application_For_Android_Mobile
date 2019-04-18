@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.design.widget.NavigationView;
@@ -54,6 +55,12 @@ public class MainActivity extends AppCompatActivity
 
     public void setWifiScanned(boolean wifiScanned) {
         isWifiScanned = wifiScanned;
+    }
+
+    @Override
+    protected void onResume() {
+
+        super.onResume();
     }
 
     @Override
