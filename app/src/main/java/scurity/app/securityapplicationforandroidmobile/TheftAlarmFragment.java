@@ -111,23 +111,5 @@ public class TheftAlarmFragment extends Fragment {
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
     }
-
-    public void setRegiState(boolean isRegistered, boolean isLoadingDone){
-        ConstraintLayout loadingLayout = getView().findViewById(R.id.loading_layout);
-        ConstraintLayout unregisteredLayout = getView().findViewById(R.id.unregistered_layout);
-        ConstraintLayout registeredLayout = getView().findViewById(R.id.registered_layout);
-        if(isLoadingDone){
-
-            loadingLayout.setVisibility(View.GONE);
-            if(!isRegistered){
-                unregisteredLayout.setVisibility(View.VISIBLE);
-                registeredLayout.setVisibility(View.GONE);
-            }else{
-                unregisteredLayout.setVisibility(View.GONE);
-                registeredLayout.setVisibility(View.VISIBLE);
-            }
-        }else{
-            loadingLayout.setVisibility(View.VISIBLE);
-        }
-    }
 }
+

@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.location.LocationManager;
 import android.net.DhcpInfo;
 import android.net.wifi.ScanResult;
@@ -185,9 +186,8 @@ public class WifiScannerFragment extends Fragment {
             headSecPoint.setGravity(Gravity.CENTER);
             TextView headSignal = makeTableText(tableFontSzie, "Strength\n(Signal)", true, false, columnWidth);
             headSignal.setGravity(Gravity.CENTER);
-            TextView headLink = makeTableText(tableFontSzie, "\u2630 \n", true, true, columnWidth, true);
-            headLink.setGravity(Gravity.CENTER_VERTICAL);
-            headLink.setGravity(Gravity.CENTER_HORIZONTAL);
+            TextView headLink = makeTableText(tableFontSzie, "More\n ", true, true, columnWidth, true);
+            headLink.setGravity(Gravity.CENTER);
 
             firstRow.addView(headName);
             firstRow.addView(headFrq);
@@ -233,7 +233,7 @@ public class WifiScannerFragment extends Fragment {
             TableRow.LayoutParams params  = new TableRow.LayoutParams(100, ViewGroup.LayoutParams.WRAP_CONTENT);
             params.weight=Float.parseFloat("0.1");
             detailBtn.setLayoutParams(params);
-            detailBtn.setBackgroundColor(colorForBtn);
+            detailBtn.setBackgroundColor(getResources().getColor(R.color.backgroundColor));
             final String info = getAllConnectedWifiInfo();
 
             detailBtn.setOnClickListener(new ModifiedOnClickListener(info) {
@@ -306,8 +306,11 @@ public class WifiScannerFragment extends Fragment {
         if(!isEnd){
             params.setMargins(0,0,5,0);
         }
-        if(isHead)
-            textView.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+        if(isHead){
+            textView.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            textView.setTextColor(Color.WHITE);
+            textView.setTypeface(null, Typeface.BOLD);
+        }
 
         textView.setLayoutParams(params);
         return textView;
@@ -324,8 +327,12 @@ public class WifiScannerFragment extends Fragment {
         if(!isEnd){
             params.setMargins(0,0,5,0);
         }
-        if(isHead)
-            textView.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+        if(isHead){
+            textView.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            textView.setTextColor(Color.WHITE);
+            textView.setTypeface(null, Typeface.BOLD);
+        }
+
 
         textView.setLayoutParams(params);
         return textView;
@@ -527,7 +534,7 @@ public class WifiScannerFragment extends Fragment {
     }
 
     private Button makeDetailBtn(int tableFontSize, final ScanResult scanResult){
-        int colorForBtn = getResources().getColor(R.color.colorForDetailBtn);
+//        int colorForBtn = getResources().getColor(R.color.colorForDetailBtn);
 
         Button detailBtn = new Button(context);
         detailBtn.setText(R.string.detail_char);
@@ -536,7 +543,7 @@ public class WifiScannerFragment extends Fragment {
         params.weight=Float.parseFloat("0.1");
         detailBtn.setLayoutParams(params);
 
-        detailBtn.setBackgroundColor(colorForBtn);
+        detailBtn.setBackgroundColor(getResources().getColor(R.color.backgroundColor));
 
         detailBtn.setOnClickListener(new ModifiedOnClickListener(scanResult){
             @Override
