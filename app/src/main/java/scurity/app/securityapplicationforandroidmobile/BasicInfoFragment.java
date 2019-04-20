@@ -44,23 +44,23 @@ public class BasicInfoFragment extends Fragment {
 
 
         textView.setText(
-                "The screen size is:"+Math.sqrt(height*height+width*width) +"\n" +
+                "The screen size is:"+Math.sqrt(height*height+width*width) +"\n\n" +
                         "Manufacturer: " + Build.MANUFACTURER +"\n"
 
-                        +  "Brand:" + Build.BRAND+"\n"
-                        +"Model: " + Build.MODEL+"\n"
-                        +  "Board: " + Build.BOARD+"\n"
-                        + "Hardware: " + Build.HARDWARE+"\n"
-                        +  "Serial: " + Build.SERIAL+"\n"
+                        +  "Brand:" + Build.BRAND+"\n\n"
+                        +"Model: " + Build.MODEL+"\n\n"
+                        +  "Board: " + Build.BOARD+"\n\n"
+                        + "Hardware: " + Build.HARDWARE+"\n\n"
+                        +  "Serial: " + Build.SERIAL+"\n\n"
 
-                        + "Bootloader: " + Build.BOOTLOADER+"\n"
-                        + "User: " + Build.USER+"\n"
-                        +  "Host: " + Build.HOST+"\n"
-                        + "Android version: " + Build.VERSION.RELEASE+"\n"
-                        +  "API level: " + Build.VERSION.SDK_INT + ""+"\n"
-                        +  "Build ID: " + Build.ID+"\n"
-                        +  "Build time: " + Build.TIME +"\n"
-                        +  "Fingerprint: " + Build.FINGERPRINT+"\n"
+                        + "Bootloader: " + Build.BOOTLOADER+"\n\n"
+                        + "User: " + Build.USER+"\n\n"
+                        +  "Host: " + Build.HOST+"\n\n"
+                        + "Android version: " + Build.VERSION.RELEASE+"\n\n"
+                        +  "API level: " + Build.VERSION.SDK_INT + ""+"\n\n"
+                        +  "Build ID: " + Build.ID+"\n\n"
+                        +  "Build time: " + Build.TIME +"\n\n"
+                        +  "Fingerprint: " + Build.FINGERPRINT+"\n\n"
         );
 
         return view;
