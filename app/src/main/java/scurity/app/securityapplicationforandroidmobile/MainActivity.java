@@ -13,8 +13,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.Fragment;
+
 import android.support.v4.app.FragmentManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
@@ -45,7 +44,7 @@ public class MainActivity extends AppCompatActivity
     private SettingsCheckerFragment settingCheckFrag;
     private UsageTrackerFragment usageTrackFrag;
     private TheftAlarmFragment theftAlarmFrag;
-    private BatteryStateFragment batteryStateFrag;
+    private CompassFragment compassFrag;
     private BasicInfoFragment basicInfoFrag;
     private EmergencyFragment emergencyFragment;
     private AboutAppFragment aboutAppFrag;
@@ -187,11 +186,11 @@ public class MainActivity extends AppCompatActivity
                 fragmentTransaction.commit();
                 break;
 
-            case R.id.nav_batterystate:
-                setTitle("Battery State");
-                batteryStateFrag = new BatteryStateFragment();
+            case R.id.nav_compass:
+                setTitle("Compass");
+                compassFrag = new CompassFragment();
                 fragmentManager.beginTransaction().replace(
-                        R.id.main_fragment, batteryStateFrag).commit();
+                        R.id.main_fragment, compassFrag).commit();
                 break;
 
             case R.id.nav_basicinfo:

@@ -3,8 +3,10 @@
     <color name="colorPrimary">#BE1E2D</color>
     <color name="colorPrimaryDark">#6E121B</color>
     <color name="colorAccent">#D81B60</color>
+
     <color name="colorForDetailBtn">#EA6767</color>
-    <color name="colorForTableRow">#FFF1F1</color>
+    <color name="colorForTableRow">#FCEFEF</color>
     <color name="backgroundColor">#FAFAFA</color>
     <color name="otherPossibleBackground">#FAFAFA</color>
+
 </resources>

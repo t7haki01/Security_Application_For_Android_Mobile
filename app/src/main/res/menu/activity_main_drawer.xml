@@ -18,23 +18,23 @@
             android:title="Theft Alarm" />
 
         <item
-            android:id="@+id/nav_batterystate"
-            android:title="Battery State" />
+            android:id="@+id/nav_compass"
+            android:title="Compass" />
 
         <item
             android:id="@+id/nav_basicinfo"
-            android:title="Basic Info" />
+            android:title="Basic Device Info" />
+
         <item
             android:id="@+id/nav_emergency"
             android:title="Emergency" />
-
     </group>
 
-    <item android:title="SysKnife Info">
+    <item android:title="About SysKnife">
         <menu>
             <item
                 android:id="@+id/nav_aboutapp"
-                android:title="About" />
+                android:title="Info" />
         </menu>
     </item>
 
