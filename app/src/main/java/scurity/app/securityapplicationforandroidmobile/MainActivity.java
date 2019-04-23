@@ -13,8 +13,6 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
@@ -38,6 +36,7 @@ public class MainActivity extends AppCompatActivity
 
     private Context context;
     final int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 1;
+    final int ADMIN_REQUEST_GRANTED = 11;
 
     // Fragments
     private FragmentManager fragmentManager;
@@ -45,10 +44,11 @@ public class MainActivity extends AppCompatActivity
     private SettingsCheckerFragment settingCheckFrag;
     private UsageTrackerFragment usageTrackFrag;
     private TheftAlarmFragment theftAlarmFrag;
-    private BatteryStateFragment batteryStateFrag;
+    private CompassFragment compassFragment;
     private BasicInfoFragment basicInfoFrag;
     private EmergencyFragment emergencyFragment;
     private AboutAppFragment aboutAppFrag;
+
     private boolean isWifiScanned = false;
     public boolean isRegistered = false;
     public boolean isLoadingDone = false;
@@ -80,49 +80,44 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         context = getApplicationContext();
+
         // Set wifiScanFrag as first fragment
         fragmentManager = getSupportFragmentManager();
         wifiScanFrag = new WifiScannerFragment();
 
-        if (Build.VERSION.SDK_INT >= 23) {
-            // Marshmallow+ Permission APIs
-            /*
-            * Since Marshmallow, Android changed policy for the "better user privacy",
-            *So we(app) need to acquire permission from user directly with asking "?nicely"
-            * to scan wifi near since it is able to get personal location with Wifi information near(such as RSSI, IP and so on)
-            * **/
-            permissionHandler();
-        }
-
         fragmentManager.beginTransaction().replace(
                 R.id.main_fragment, wifiScanFrag).commit();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        /*
+         * Since Marshmallow, Android changed policy for the "better user privacy",
+         * So we(app) need to acquire permission from user directly with asking "nicely"
+         * to scan wifi near since it is able to get personal location with Wifi information near(such as RSSI, IP and so on)
+         * https://developer.android.com/about/versions/marshmallow/android-6.0-changes.html#behavior-hardware-id
+         * **/
+
+        // Marshmallow+ Permission APIs
+        if (Build.VERSION.SDK_INT >= 23) {
+            permissionHandler();
+        }
+
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Button action at bottom right end of screen (mail-icon)
-        // Not needed at moment, but maybe it's useful to have it for later - [SANDRO]
-        /*
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        */
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
             this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
+    /**
+     * In case, nav (drawer) is opened and back btn is pressed to close
+     * */
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -139,23 +134,6 @@ public class MainActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -168,46 +146,40 @@ public class MainActivity extends AppCompatActivity
                 if(wifiScanFrag == null){
                     wifiScanFrag = new WifiScannerFragment();
                 }
-
                 fragmentTransaction.replace(R.id.main_fragment, wifiScanFrag);
                 fragmentTransaction.commit();
                 break;
             case R.id.nav_settingschecker:
                 setTitle("Settings & Connections");
-                settingCheckFrag = new SettingsCheckerFragment();
+                if(settingCheckFrag == null){
+                    settingCheckFrag = new SettingsCheckerFragment();
+                }
                 fragmentManager.beginTransaction().replace(
                         R.id.main_fragment, settingCheckFrag).commit();
-                break;
-            case R.id.nav_usagetracker:
-                setTitle("Usage Tracker");
-                usageTrackFrag = new UsageTrackerFragment();
-                fragmentManager.beginTransaction().replace(
-                        R.id.main_fragment, usageTrackFrag).commit();
                 break;
             case R.id.nav_theftalarm:
                 setTitle("Theft Alarm");
                 if(theftAlarmFrag == null){
                     theftAlarmFrag = new TheftAlarmFragment();
                 }
-//                if(!theftAlarmFrag.isAdded()){
-//                    fragmentTransaction.add(R.id.main_fragment, theftAlarmFrag);
-//                }
-//                hideAllFragments();
-//                fragmentTransaction.show(theftAlarmFrag);
                 fragmentTransaction.replace(R.id.main_fragment, theftAlarmFrag);
                 fragmentTransaction.commit();
                 break;
 
             case R.id.nav_batterystate:
-                setTitle("Battery State");
-                batteryStateFrag = new BatteryStateFragment();
+                setTitle("Compass");
+                if(compassFragment == null){
+                    compassFragment = new CompassFragment();
+                }
                 fragmentManager.beginTransaction().replace(
-                        R.id.main_fragment, batteryStateFrag).commit();
+                        R.id.main_fragment, compassFragment).commit();
                 break;
 
             case R.id.nav_basicinfo:
                 setTitle("Basic Info");
-                basicInfoFrag = new BasicInfoFragment();
+                if(basicInfoFrag == null){
+                    basicInfoFrag = new BasicInfoFragment();
+                }
                 fragmentManager.beginTransaction().replace(
                         R.id.main_fragment, basicInfoFrag).commit();
                 break;
@@ -222,14 +194,15 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_aboutapp:
                 setTitle("About SysKnife");
-                aboutAppFrag = new AboutAppFragment();
+                if(aboutAppFrag == null){
+                    aboutAppFrag = new AboutAppFragment();
+                }
                 fragmentManager.beginTransaction().replace(
                         R.id.main_fragment, aboutAppFrag).commit();
                 break;
             default:
                 break;
         }
-
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -239,27 +212,28 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
         intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
         intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "For forcing the mobile to be locked, app requires Admin authority");
-        startActivityForResult(intent, 11);
+        startActivityForResult(intent, ADMIN_REQUEST_GRANTED);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         switch(requestCode){
-            case 11:
+            case ADMIN_REQUEST_GRANTED:
                 if(resultCode == Activity.RESULT_OK){
                     Log.d("From activity", resultCode + " and "+ requestCode);
                 }
                 else{
                     Log.d("From activity", resultCode + " and "+ requestCode);
                 }
-
                 break;
         }
-
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    //From here for handling permissions i needed
+    /**
+     * From here for handling permissions App needed,
+     * which is currently used for location permission in case of higher versions of android than Marshmallow
+     * */
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
@@ -267,22 +241,17 @@ public class MainActivity extends AppCompatActivity
                 Map<String, Integer> perms = new HashMap<String, Integer>();
                 // Initial
                 perms.put(Manifest.permission.ACCESS_FINE_LOCATION, PackageManager.PERMISSION_GRANTED);
-
-
                 // Fill with results
                 for (int i = 0; i < permissions.length; i++)
                     perms.put(permissions[i], grantResults[i]);
-
                 // Check for ACCESS_FINE_LOCATION
                 if (perms.get(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
                     // All Permissions Granted
                     // Permission Denied
-                    Toast.makeText(MainActivity.this, "All Permission GRANTED !! Good to go!", Toast.LENGTH_SHORT)
-                            .show();
+                    Toast.makeText(MainActivity.this, "All Permission GRANTED !! Good to go!", Toast.LENGTH_SHORT).show();
                 } else {
                     // Permission Denied
-                    Toast.makeText(MainActivity.this, "One or More Permissions are DENIED, App Requires Permissions to work on it ", Toast.LENGTH_SHORT)
-                            .show();
+                    Toast.makeText(MainActivity.this, "One or More Permissions are DENIED, App Requires Permissions to work on it ", Toast.LENGTH_SHORT).show();
                     finish();
                 }
             }
@@ -315,8 +284,7 @@ public class MainActivity extends AppCompatActivity
 
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                requestPermissions(permissionsList.toArray(new String[permissionsList.size()]),
-                                        REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
+                                requestPermissions(permissionsList.toArray(new String[permissionsList.size()]), REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
                             }
                         });
                 return;
@@ -326,8 +294,7 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
-        Toast.makeText(MainActivity.this, "No new Permission Required - Everything Clean!", Toast.LENGTH_SHORT)
-                .show();
+        Toast.makeText(MainActivity.this, "No new Permission Required - Everything Good to go!", Toast.LENGTH_SHORT).show();
     }
 
     private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
@@ -344,7 +311,7 @@ public class MainActivity extends AppCompatActivity
 
         if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
             permissionsList.add(permission);
-            // Check for Rationale Option
+
             if (!shouldShowRequestPermissionRationale(permission))
                 return false;
         }

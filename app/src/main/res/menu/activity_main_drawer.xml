@@ -7,19 +7,18 @@
         <item
             android:id="@+id/nav_wifiscanner"
             android:title="WiFi Scanner" />
+
         <item
             android:id="@+id/nav_settingschecker"
             android:title="Settings &amp; Connections" />
-        <item
-            android:id="@+id/nav_usagetracker"
-            android:title="App Usage Tracker" />
+
         <item
             android:id="@+id/nav_theftalarm"
             android:title="Theft Alarm" />
 
         <item
             android:id="@+id/nav_batterystate"
-            android:title="Battery State" />
+            android:title="Compass" />
 
         <item
             android:id="@+id/nav_basicinfo"

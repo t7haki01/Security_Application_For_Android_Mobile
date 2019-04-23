@@ -52,7 +52,6 @@ public class BasicInfoFragment extends Fragment {
                         +  "Board: " + Build.BOARD+"\n\n"
                         + "Hardware: " + Build.HARDWARE+"\n\n"
                         +  "Serial: " + Build.SERIAL+"\n\n"
-
                         + "Bootloader: " + Build.BOOTLOADER+"\n\n"
                         + "User: " + Build.USER+"\n\n"
                         +  "Host: " + Build.HOST+"\n\n"
