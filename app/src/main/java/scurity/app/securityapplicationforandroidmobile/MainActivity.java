@@ -52,6 +52,11 @@ public class MainActivity extends AppCompatActivity
     private boolean isWifiScanned = false;
     public boolean isRegistered = false;
     public boolean isLoadingDone = false;
+    private boolean isGoingOut = false;
+
+    public void setGoingOut(boolean goingOut) {
+        isGoingOut = goingOut;
+    }
 
     public void setWifiScanned(boolean wifiScanned) {
         isWifiScanned = wifiScanned;
@@ -59,7 +64,13 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
-
+        if(isGoingOut){
+            theftAlarmFrag.registerCheck();
+            isGoingOut = false;
+        }
+        else{
+            isGoingOut = false;
+        }
         super.onResume();
     }
 

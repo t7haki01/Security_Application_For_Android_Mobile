@@ -1,6 +1,7 @@
 package scurity.app.securityapplicationforandroidmobile;
 
 
+import android.app.Activity;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -110,6 +111,11 @@ public class TheftAlarmFragment extends Fragment {
         Uri uri = Uri.parse("http://www.students.oamk.fi/~t7haki01/sysknife/demo/site/pricing");
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
+        ((MainActivity) context ).setGoingOut(true);
+    }
+
+    public void registerCheck(){
+        new TheftAlarmAct(loadingLayout, registeredLayout, unregisteredLayout, context).checkRegister();
     }
 }
 
