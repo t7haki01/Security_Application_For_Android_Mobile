@@ -26,19 +26,12 @@ import java.util.regex.Pattern;
 
 public class WifiGetter {
 
-    /**
-     * Since i am thinking to put instantiation of this class to onClick for scanning wifi
-     * So with current context, constructor would be processed
-     * That is why i'm indicating with "this" keyword for current object in every methods
-     * */
-
     private Context context;
     private WifiManager wifiManager ;
     private WifiInfo wifiInfo ;
     private ConnectivityManager connectivityManager ;
     private int wifiState;
     private WifiConfiguration wifiConfiguration;
-    private boolean isConnected = false;
     private NetworkInfo networkInfo;
     private HashMap<String, ScanResult> scanResultHashMap;
     private ScanResult connectedWifiscanResult;
@@ -46,10 +39,6 @@ public class WifiGetter {
 
     public boolean isScanDone() {
         return isScanDone;
-    }
-
-    public void setScanDone(boolean scanDone) {
-        isScanDone = scanDone;
     }
 
     public HashMap<String, ScanResult> getScanResultHashMap() {
@@ -69,9 +58,9 @@ public class WifiGetter {
     }
 
     /**
- * Another way of filtering security capabilities with returning String values below but currently using other method
- * 28.3.2019, kihun
- * */
+     * Another way of filtering security capabilities with returning String values below but currently using other method
+     * 28.3.2019, kihun
+    **/
     static final String SECURITY_PSK = "PSK";
     static final String SECURITY_EAP = "EAP";
     static final String SECURITY_WEP = "WEP";
@@ -108,8 +97,7 @@ public class WifiGetter {
         this.wifiState = this.wifiManager.getWifiState();
     }
 
-    public WifiConfiguration GetCurrentWifiConfiguration()
-    {
+    public WifiConfiguration GetCurrentWifiConfiguration() {
         if (!this.wifiManager.isWifiEnabled())
             return null;
 
@@ -123,10 +111,6 @@ public class WifiGetter {
                 configuration = wifiConfiguration;
         }
         return configuration;
-    }
-
-    public boolean isWifiEnabled(){
-        return wifiManager.isWifiEnabled();
     }
 
     public String getSsid(){
@@ -149,54 +133,6 @@ public class WifiGetter {
 
     public WifiManager getWifiManager(){return wifiManager;}
 
-    public void getAllAvailable(){
-//        Log.d("wifi Rssi", ""+wifiInfo.getRssi());
-//        Log.d("wifi toString", ""+wifiInfo.toString());
-//        Log.d("wifi network Id", ""+wifiInfo.getNetworkId());
-//        Log.d("wifi mac address", ""+wifiInfo.getMacAddress());
-        Log.d("wifi ip address", ""+wifiInfo.getIpAddress());
-//        Log.d("wifi Hidden SSID", ""+wifiInfo.getHiddenSSID());
-        /**frequenct for api 21*/
-//        Log.d("wifi frequency", ""+wifiInfo.getFrequency());
-//        Log.d("wifi BSSID", ""+wifiInfo.getBSSID());
-//        Log.d("wifi desribe contents", ""+wifiInfo.describeContents());
-//        Log.d("wifi Link speed", ""+wifiInfo.getLinkSpeed());
-//        Log.d("wifi supplicant state", ""+wifiInfo.getSupplicantState());
-
-//        Log.d("State change", "**********From here used wifi manager***************");
-//        Log.d("wifi dhcp info", ""+wifiManager.getDhcpInfo());
-//        Log.d("wifi connet info", ""+wifiManager.getConnectionInfo());
-//        Log.d("wifi wifi state", ""+wifiManager.getWifiState());
-//        Log.d("wifi is wifi enabled", ""+wifiManager.isWifiEnabled());
-        Log.d("current config", ""+GetCurrentWifiConfiguration() );
-        Log.d("current manager", ""+getWifiManager() );
-        Log.d("current info", ""+wifiInfo );
-
-//        Log.d("WPA EAP check", ""+GetCurrentWifiConfiguration().allowedKeyManagement.get(WifiConfiguration.KeyMgmt.WPA_EAP));
-//        Log.d("WPA PSK check", ""+GetCurrentWifiConfiguration().allowedKeyManagement.get(WifiConfiguration.KeyMgmt.WPA_PSK));
-//        Log.d("IEEE8021x check", ""+GetCurrentWifiConfiguration().allowedKeyManagement.get(WifiConfiguration.KeyMgmt.IEEE8021X));
-//        Log.d("wepkeys", ""+GetCurrentWifiConfiguration().wepKeys);
-//        Log.d("allowed alogirithms", ""+GetCurrentWifiConfiguration().allowedAuthAlgorithms.toString());
-
-    }
-
-    public String connectedWifiSecurity(){
-        WifiConfiguration config  = GetCurrentWifiConfiguration();
-
-        String connectedWifiSecurity = getSecurity(config);
-
-        Log.d("Own wifi Security ", connectedWifiSecurity);
-
-        return connectedWifiSecurity;
-    }
-
-    public String getCurrentWifiSecurity(){
-        WifiConfiguration config = GetCurrentWifiConfiguration();
-        String secInfo = config.allowedAuthAlgorithms.toString() + " " + config.allowedGroupCiphers + " " + config.allowedPairwiseCiphers
-                + " " + config.allowedKeyManagement;
-        return secInfo;
-    }
-
     public void wifiScan(){
         isScanDone = false;
         wifiManager.startScan();
@@ -204,20 +140,19 @@ public class WifiGetter {
             @Override
             public void onReceive(Context c, Intent intent) {
 
-//                boolean success = intent.getBooleanExtra(
-//                        WifiManager.EXTRA_PREVIOUS_WIFI_STATE, false);
+//        /*Another condition for listening intent when there are different wifis available than previous*/
+//        boolean success = intent.getBooleanExtra(
+//        WifiManager.EXTRA_PREVIOUS_WIFI_STATE, false);
 
-                boolean success = WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(intent.getAction());
+            boolean success = WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(intent.getAction());
 
-                Log.d("scan status from broad", ""+success);
-                if (success) {
-                    scanSuccess();
-                } else {
-                    Log.d("not success", "Fired inside broad");
-                    // scan failure handling
-                    scanFailure();
-                }
-
+            Log.d("status in broadcast", ""+success);
+            if (success) {
+                scanSuccess();
+            } else {
+                Log.d("not success", "Fired inside broadcast");
+                scanFailure();
+            }
             }
         };
 
@@ -228,8 +163,7 @@ public class WifiGetter {
         boolean success = wifiManager.startScan();
         Log.d("scan status", ""+success);
         if (!success) {
-            Log.d("not success", "Fired before broad");
-            // scan failure handling
+            Log.d("not success", "Fired before broadcast");
             scanFailure();
         }
     }
@@ -261,7 +195,6 @@ public class WifiGetter {
             String connected = wifiInfo.getSSID().substring(1,wifiInfo.getSSID().length()-1);
             if(!connected.equals(key)){
                 filteredScanResult.put(key, routerFilter.get(key));
-//                Log.d("Scanned wifi", ""+routerFilter.get(key));
             }
             else if(connected.equals(key)){
                 connectedScanResult = routerFilter.get(key);
@@ -277,7 +210,6 @@ public class WifiGetter {
 /**Here is in case of failing the scan but it still get the result because possible of getting older scan result*/
         List<ScanResult> results = wifiManager.getScanResults();
         Log.d("Wifi Scan failed", "Failed but here comes possible previous" + results);
-
     }
 
     static String getSecurity(WifiConfiguration config) {
@@ -376,8 +308,6 @@ public class WifiGetter {
                 }
             }
         }
-
         return securityScore;
     }
-
 }

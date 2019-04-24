@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity
     private FragmentManager fragmentManager;
     private WifiScannerFragment wifiScanFrag = null;
     private SettingsCheckerFragment settingCheckFrag;
-    private UsageTrackerFragment usageTrackFrag;
     private TheftAlarmFragment theftAlarmFrag;
     private CompassFragment compassFragment;
     private BasicInfoFragment basicInfoFrag;
@@ -176,7 +175,7 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.nav_basicinfo:
-                setTitle("Basic Info");
+                setTitle("Device Info");
                 if(basicInfoFrag == null){
                     basicInfoFrag = new BasicInfoFragment();
                 }
