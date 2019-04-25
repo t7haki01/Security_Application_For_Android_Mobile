@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity
                 fragmentTransaction.commit();
                 break;
 
-            case R.id.nav_batterystate:
+            case R.id.nav_compass:
                 setTitle("Compass");
                 if(compassFragment == null){
                     compassFragment = new CompassFragment();
@@ -246,7 +246,6 @@ public class MainActivity extends AppCompatActivity
                 // Check for ACCESS_FINE_LOCATION
                 if (perms.get(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
                     // All Permissions Granted
-                    // Permission Denied
                     Toast.makeText(MainActivity.this, "All Permission GRANTED !! Good to go!", Toast.LENGTH_SHORT).show();
                 } else {
                     // Permission Denied

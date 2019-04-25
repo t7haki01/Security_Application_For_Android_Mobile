@@ -17,7 +17,7 @@
             android:title="Theft Alarm" />
 
         <item
-            android:id="@+id/nav_batterystate"
+            android:id="@+id/nav_compass"
             android:title="Compass" />
 
         <item
