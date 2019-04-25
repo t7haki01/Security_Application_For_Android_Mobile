@@ -210,10 +210,12 @@ public class WifiScannerFragment extends Fragment {
             TextView wifiSsid = makeTableText(tableFontSzie, wifiInfo.getSsid(), false, false, columnWidth );
             wifiSsid.setTextColor(connectedWifiColor);
 
-            TextView wifiFreq = makeTableText(tableFontSzie, wifiInfo.getWifiManager().getConnectionInfo().getHiddenSSID()? "YES":"NO"
+            TextView wifiFreq = makeTableText(tableFontSzie,
 
-                    /**Uncomment this when production mode or in the environment API level higher than 21 which is able to use following api
-                     * wifiInfo.getConnectionInfo().getFrequency()**/
+//                    wifiInfo.getWifiManager().getConnectionInfo().getHiddenSSID()? "YES":"NO"
+
+            //Uncomment this when production mode or in the environment API level higher than 21 which is able to use following api
+                    wifiInfo.getConnectionInfo().getFrequency() +""
 
                     , false, false, columnWidth );
             wifiFreq.setTextColor(connectedWifiColor);
